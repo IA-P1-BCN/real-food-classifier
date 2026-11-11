@@ -41,6 +41,23 @@ source .venv/bin/activate   # en fish: source .venv/bin/activate.fish
 pip install -r requirements.txt
 ```
 
+## Docker (entorno común)
+
+Alternativa a la instalación local: todas usamos las mismas versiones de Python y de las librerías. Requisito: Docker Desktop abierto.
+
+```bash
+cp .env.example .env          # después añade tu propia GEMINI_API_KEY en .env
+docker compose build          # construye la imagen (solo la primera vez o si cambia requirements.txt)
+docker compose up jupyter     # solo Jupyter: http://127.0.0.1:8888 (el token sale en los logs)
+docker compose up             # Jupyter + Streamlit (http://127.0.0.1:8501), cuando exista app/app.py
+```
+
+Para parar: `Ctrl+C`.
+
+**Notebooks en VS Code:** abre el notebook, **Select Kernel → Existing Jupyter Server**, y pega la URL con el token que aparece en los logs. También puedes usar tu entorno local en lugar de Docker.
+
+**Seguridad:** Los puertos están ligados a `127.0.0.1`, así que solo son accesibles desde tu propio ordenador.
+
 ## Estado
 
 🚧 En curso: análisis exploratorio (EDA).
