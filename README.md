@@ -58,6 +58,14 @@ Para parar: `Ctrl+C`.
 
 **Seguridad:** Los puertos están ligados a `127.0.0.1`, así que solo son accesibles desde tu propio ordenador.
 
+## Reconstruir el dataset
+
+```bash
+python src/build_dataset.py
+```
+
+Lee `data/raw/off_products.csv.gz` y regenera `data/interim/` y `data/processed/off_nova_clean.csv.gz`, con los pasos 1-8 de `notebooks/01_eda.ipynb` y el mismo split fijo. Tarda unos minutos.
+
 ## Estado
 
 🚧 En curso: análisis exploratorio (EDA).
