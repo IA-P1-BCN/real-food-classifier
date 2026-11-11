@@ -68,4 +68,7 @@ Lee `data/raw/off_products.csv.gz` y regenera `data/interim/` y `data/processed/
 
 ## Estado
 
-🚧 En curso: análisis exploratorio (EDA).
+- [x] Fase 1 · EDA y limpieza del dataset
+- [ ] Fase 2 · Modelos y comparación
+- [ ] Fase 3 · App (Streamlit + Gemini)
+- [ ] Fase 4 · Informe y demo
