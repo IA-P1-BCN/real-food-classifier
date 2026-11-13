@@ -13,6 +13,7 @@ optuna==5.0.0
 joblib==1.6.0
 # Notebooks
 jupyterlab==4.6.6
+ipywidgets==8.1.9
 # App and Gemini
 streamlit==1.67.0
 google-genai==3.1.0
