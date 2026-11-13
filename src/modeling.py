@@ -12,7 +12,10 @@ from sklearn.preprocessing import FunctionTransformer, OneHotEncoder, StandardSc
 
 # Ruta relativa a este fichero. Para importar el módulo desde notebooks/ hace falta
 # añadir la raíz al path: sys.path.insert(0, "..") en la primera celda
-DATA_PATH = Path(__file__).resolve().parents[1] / "data" / "processed" / "off_nova_clean.csv.gz"
+ROOT = Path(__file__).resolve().parents[1]
+DATA_PATH = ROOT / "data" / "processed" / "off_nova_clean.csv.gz"
+MODELS_DIR = ROOT / "models"      # modelos .joblib (carpeta ignorada por git: se regeneran con el notebook)
+REPORTS_DIR = ROOT / "reports"    # métricas en JSON (se suben al repo para comparar modelos)
 
 TARGET = "nova_group"
 GROUP = "grupo_producto"
