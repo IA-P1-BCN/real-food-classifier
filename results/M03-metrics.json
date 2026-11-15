@@ -1,0 +1,82 @@
+{
+  "model": "RandomForestClassifier",
+  "variant": "A: sin límites de profundidad",
+  "config": {
+    "n_estimators": 200,
+    "max_depth": null,
+    "min_samples_leaf": 1,
+    "class_weight": "balanced",
+    "random_state": 42
+  },
+  "features": [
+    "additives_n",
+    "n_ingredientes",
+    "sin_lista_ingredientes",
+    "energy-kcal_100g",
+    "fat_100g",
+    "saturated-fat_100g",
+    "carbohydrates_100g",
+    "sugars_100g",
+    "fiber_100g",
+    "proteins_100g",
+    "salt_100g",
+    "fruits-vegetables-legumes_100g",
+    "tiene_aromas",
+    "tiene_edulcorantes",
+    "tiene_jarabes",
+    "tiene_almidon_modificado",
+    "tiene_proteina_aislada",
+    "tiene_colorantes",
+    "tiene_emulsionantes",
+    "tiene_potenciadores",
+    "tiene_aceite_palma",
+    "tiene_conservantes",
+    "tiene_sal",
+    "tiene_azucar",
+    "tiene_aceite",
+    "pnns_groups_2"
+  ],
+  "cv": {
+    "f1_macro_train": 0.9913,
+    "f1_macro_cv": 0.9607,
+    "f1_macro_cv_std": 0.0025,
+    "gap": 0.0306,
+    "recall": {
+      "nova_1": 0.9849,
+      "nova_2": 0.9907,
+      "nova_3": 0.9554,
+      "nova_4": 0.9517
+    },
+    "confusion_matrix": [
+      [
+        4877,
+        8,
+        49,
+        18
+      ],
+      [
+        12,
+        4268,
+        22,
+        6
+      ],
+      [
+        167,
+        14,
+        7514,
+        170
+      ],
+      [
+        155,
+        12,
+        866,
+        20337
+      ]
+    ]
+  },
+  "n_train": 38495,
+  "env": {
+    "python": "3.12.15",
+    "scikit-learn": "1.9.1"
+  }
+}
