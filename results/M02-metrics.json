@@ -1,7 +1,7 @@
 {
   "model": "KNeighborsClassifier",
   "variant": "3_k11_sin_redundantes",
-  "config": {
+  "params": {
     "n_neighbors": 11,
     "weights": "distance",
     "p": 1,
@@ -73,18 +73,9 @@
         1221,
         19908
       ]
-    ],
-    "seconds": 48.6,
-    "config": {
-      "n_neighbors": 11,
-      "weights": "distance",
-      "p": 1,
-      "dropped": [
-        "energy-kcal_100g",
-        "saturated-fat_100g"
-      ]
-    }
+    ]
   },
+  "cv_seconds": 53.7,
   "dummy_cv": {
     "f1_macro_train": 0.1785,
     "f1_macro_cv": 0.1785,
