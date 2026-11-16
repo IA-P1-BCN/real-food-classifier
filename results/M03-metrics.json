@@ -1,7 +1,7 @@
 {
   "model": "RandomForestClassifier",
   "variant": "A: sin límites de profundidad",
-  "config": {
+  "params": {
     "n_estimators": 200,
     "max_depth": null,
     "min_samples_leaf": 1,
