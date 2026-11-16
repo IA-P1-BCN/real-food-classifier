@@ -16,6 +16,34 @@
     "reg_lambda": 0.030545946383654883,
     "reg_alpha": 0.01040481853123859
   },
+  "features": [
+    "pnns_groups_2",
+    "additives_n",
+    "energy-kcal_100g",
+    "fat_100g",
+    "saturated-fat_100g",
+    "carbohydrates_100g",
+    "sugars_100g",
+    "fiber_100g",
+    "proteins_100g",
+    "salt_100g",
+    "fruits-vegetables-legumes_100g",
+    "n_ingredientes",
+    "tiene_aromas",
+    "tiene_edulcorantes",
+    "tiene_jarabes",
+    "tiene_almidon_modificado",
+    "tiene_proteina_aislada",
+    "tiene_colorantes",
+    "tiene_emulsionantes",
+    "tiene_potenciadores",
+    "tiene_aceite_palma",
+    "tiene_conservantes",
+    "tiene_sal",
+    "tiene_azucar",
+    "tiene_aceite",
+    "sin_lista_ingredientes"
+  ],
   "cv": {
     "f1_macro_train": 0.9996,
     "f1_macro_cv": 0.965,
@@ -94,5 +122,11 @@
   },
   "test": {
     "macro_f1": 0.9622
+  },
+  "n_train": 38495,
+  "env": {
+    "python": "3.12.16",
+    "scikit-learn": "1.9.1",
+    "lightgbm": "4.7.0"
   }
 }
