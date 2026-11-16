@@ -1,7 +1,7 @@
 {
   "model": "DecisionTreeClassifier",
   "variant": "3 balanced, depth=18",
-  "config": {
+  "params": {
     "max_depth": 18,
     "class_weight": "balanced",
     "log_skewed": false,
