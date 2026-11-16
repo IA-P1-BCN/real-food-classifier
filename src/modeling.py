@@ -16,6 +16,7 @@ ROOT = Path(__file__).resolve().parents[1]
 DATA_PATH = ROOT / "data" / "processed" / "off_nova_clean.csv.gz"
 MODELS_DIR = ROOT / "models"      # modelos .joblib (carpeta ignorada por git: se regeneran con el notebook)
 RESULTS_DIR = ROOT / "results"    # métricas en JSON (se suben al repo para comparar modelos)
+REPORTS_DIR = ROOT / "reports"    # figuras para los PR y la memoria (se suben al repo)
 
 TARGET = "nova_group"
 GROUP = "grupo_producto"
