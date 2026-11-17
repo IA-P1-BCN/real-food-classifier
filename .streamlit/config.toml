@@ -1,0 +1,12 @@
+# Tema oscuro "C · Lab". Streamlit lo lee al arrancar desde la raíz del repo
+[theme]
+base = "dark"
+primaryColor = "#C6F36B"              # lima: botón, casillas marcadas, foco
+backgroundColor = "#0E1311"           # fondo de la página
+secondaryBackgroundColor = "#151C19"  # fondo de la etiqueta y de los campos
+textColor = "#E8EFEA"
+font = "'Space Grotesk':https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap, sans-serif"
+codeFont = "'JetBrains Mono':https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap, monospace"
+
+[client]
+toolbarMode = "minimal"               # sin menú de desarrollador arriba a la derecha
