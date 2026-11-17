@@ -53,22 +53,24 @@ ADDITIVE_NAMES = {
     r"glucosidos de esteviol": "E960",
 }
 
-# Palabras clave por marcador (equivalentes en español de las reglas de build_dataset.py).
+# Palabras clave por marcador (equivalentes de las reglas de build_dataset.py).
+# Sobre todo en español, más las palabras en inglés y portugués más frecuentes,
+# porque muchas etiquetas en España vienen en varios idiomas.
 # Los que en el dataset salen de los números E se completan además con find_additives
 KEYWORDS = {
-    "tiene_aromas": r"\baromas?\b|aromatizantes?|\bflavou?rings?\b",
-    "tiene_edulcorantes": r"\bedulcorantes?\b|sucralosa|aspartamo|acesulfamo|sacarina|ciclamato|esteviol",
-    "tiene_jarabes": r"\bjarabes?\b|\bsirope\b|maltodextrina|dextrosa|\bsyrup\b",
-    "tiene_almidon_modificado": r"almidon(?:es)?(?: de [a-z]+)? modificados?",
-    "tiene_proteina_aislada": r"proteinas? aisladas?|aislado de proteina|hidrolizad|\bsuero\b|lactosuero|caseinato",
-    "tiene_colorantes": r"\bcolorantes?\b",
-    "tiene_emulsionantes": r"\bemulgentes?\b|\bemulsionantes?\b|\bestabilizantes?\b|\bespesantes?\b|\bgelificantes?\b",
-    "tiene_potenciadores": r"potenciador(?:es)? del sabor|glutamato",
-    "tiene_aceite_palma": r"\bpalma\b|palmiste",
-    "tiene_conservantes": r"\bconserva(?:dor|nte)s?\b",
+    "tiene_aromas": r"\baromas?\b|aromatizantes?|\bflavou?rs?\b|\bflavou?rings?\b",
+    "tiene_edulcorantes": r"\bedulcorantes?\b|\bsweeteners?\b|sucralos|aspartam|acesulfam|sacarina|saccharin|ciclamato|cyclamate|esteviol|steviol",
+    "tiene_jarabes": r"\bjarabes?\b|\bsirope\b|\bxarope\b|\bsyrup\b|maltodextrin|dextrosa|dextrose",
+    "tiene_almidon_modificado": r"almidon(?:es)?(?: de [a-z]+)? modificados?|modified (?:[a-z]+ )?starch|amido modificado",
+    "tiene_proteina_aislada": r"proteinas? aisladas?|aislado de proteina|protein isolate|hidrolizad|hydroly[sz]ed|\bsuero\b|lactosuero|\bwhey\b|\bsoro\b|caseinat",
+    "tiene_colorantes": r"\bcolorantes?\b|\bcolou?rs?\b|\bcolou?rings?\b",
+    "tiene_emulsionantes": r"\bemulgentes?\b|\bemulsionantes?\b|\bemulsifiers?\b|\bestabilizantes?\b|\bstabili[sz]ers?\b|\bespesantes?\b|\bthickeners?\b|\bgelificantes?\b",
+    "tiene_potenciadores": r"potenciador(?:es)? del sabor|flavou?r enhancers?|glutamat",
+    "tiene_aceite_palma": r"\bpalma\b|palmiste|\bpalm\b",
+    "tiene_conservantes": r"\bconserva(?:dor|nte)s?\b|\bpreservatives?\b",
     "tiene_sal": r"\bsal\b|\bsalt\b",
-    "tiene_azucar": r"\bazucar(?:es)?\b|\bsugar\b",
-    "tiene_aceite": r"\baceites?\b|\boil\b",
+    "tiene_azucar": r"\bazucar(?:es)?\b|\bsugar\b|\bacucar\b",
+    "tiene_aceite": r"\baceites?\b|\boils?\b|\boleo\b",
 }
 
 # Rangos de números E, iguales a los de crear_variables (src/build_dataset.py)

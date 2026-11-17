@@ -20,6 +20,7 @@ sys.path.insert(0, str(ROOT))
 
 from src.build_dataset import contar_ingredientes  # noqa: E402  (misma regla que el dataset)
 from src.ingredient_markers import detect_markers, find_additives  # noqa: E402
+from src.label_checks import check_label  # noqa: E402  (mismas reglas que la limpieza de E01)
 from src.label_extraction import PNNS_GROUPS_2  # noqa: E402  (las 42 subcategorías)
 from src.modeling import (  # noqa: E402
     CATEGORY, TARGET, build_preprocessor, get_feature_columns, load_train,
@@ -156,6 +157,35 @@ def autodetect_from_ingredients():
     st.session_state.autodetected = bool(text.strip())
 
 
+def reset_form():
+    """Botón "Nuevo producto": borra todo lo escrito y el resultado.
+    Igual que en la autodetección, escribimos en st.session_state con la key de cada
+    widget, y en la siguiente recarga cada campo aparece vacío o sin marcar.
+    (Borrar las keys con del no basta: el navegador vuelve a mandar los valores antiguos)"""
+    st.session_state[CATEGORY] = None                 # desplegable sin elegir
+    for column, *_ in NUTRIENTS:
+        st.session_state[column] = None               # nutrientes vacíos
+    st.session_state.ingredients_text = ""
+    st.session_state.sin_lista_ingredientes = False
+    st.session_state.additives_n = 0
+    for column in st.session_state.marker_columns:
+        st.session_state[column] = False              # casillas sin marcar
+    st.session_state.autodetected = False
+    st.session_state.result = {"nova": None, "proba": None, "errors": [], "warnings": []}
+
+
+def clear_ingredients():
+    """Se ejecuta al activar "no tiene lista de ingredientes": vacía el texto, desmarca
+    las casillas y pone 0 aditivos. En el dataset, los productos sin lista tienen
+    todos los tiene_* a 0, así que el modelo nunca ha visto otra combinación."""
+    if st.session_state.sin_lista_ingredientes:
+        st.session_state.ingredients_text = ""
+        for column in st.session_state.marker_columns:
+            st.session_state[column] = False
+        st.session_state.additives_n = 0
+        st.session_state.autodetected = False
+
+
 # ---------------------------------------------------------------- Utilidades de HTML
 def html(fragmento):
     """Pinta HTML con st.markdown.
@@ -218,6 +248,9 @@ def render_result(result):
                 </div>
             </div>
         """)
+        # Avisos: valores raros pero posibles (p. ej. energía que parece estar en kJ)
+        for warning in result.get("warnings", []):
+            html(f'<div class="rf-empty rf-warning">{warning}</div>')
 
     # Leyenda: cada fila lleva de fondo una barra con la probabilidad de su grupo.
     # El color al 15 % de opacidad se consigue añadiendo "26" (hex) al color
@@ -246,7 +279,7 @@ st.set_page_config(page_title="Real Food Classifier", page_icon="🥦", layout="
 st.html(Path(__file__).parent / "style.css")   # Streamlit lo envuelve en <style> por ser .css
 
 # Guardamos el último resultado para que no se pierda si la página se recarga
-st.session_state.setdefault("result", {"nova": None, "proba": None, "errors": []})
+st.session_state.setdefault("result", {"nova": None, "proba": None, "errors": [], "warnings": []})
 
 with st.spinner("Preparando el modelo (solo la primera vez)..."):
     model, cols = load_model()
@@ -292,11 +325,12 @@ with col_label:
         with st.container(key="sec_ingredientes"):
             html('<div class="rf-rule-thick"></div><h3 class="rf-section-title">Ingredientes</h3>')
             no_list = st.toggle("El producto no tiene lista de ingredientes",
-                                key="sin_lista_ingredientes")
+                                key="sin_lista_ingredientes", on_change=clear_ingredients)
             # on_change: al salir del cuadro (o Ctrl+Enter) se marcan las casillas solas
             ingredients = st.text_area("Lista de ingredientes", key="ingredients_text",
                                        placeholder="Pega aquí la lista de ingredientes de la etiqueta",
-                                       on_change=autodetect_from_ingredients)
+                                       on_change=autodetect_from_ingredients,
+                                       disabled=no_list)   # sin lista: los campos se bloquean
 
             with st.container(key="rows_aditivos"):
                 with label_row("Número de aditivos", "E-xxx"):
@@ -304,18 +338,23 @@ with col_label:
                     # de autodetección también lo escribe (Streamlit avisa si se hacen las dos cosas)
                     st.session_state.setdefault("additives_n", 0)
                     additives_n = st.number_input("Número de aditivos", min_value=0, step=1,
-                                                  label_visibility="collapsed", key="additives_n")
+                                                  label_visibility="collapsed", key="additives_n",
+                                                  disabled=no_list)
 
             html('<p class="rf-field-label top">¿Qué aparece en los ingredientes?</p>')
             if st.session_state.get("autodetected"):
-                html('<p class="rf-hint">Marcado automáticamente a partir de la lista. Revísalo y corrige si hace falta.</p>')
+                html('<p class="rf-hint">Marcado automáticamente a partir de la lista. Revísalo y corrige si hace falta. Si cambias la lista, se vuelve a marcar desde cero.</p>')
             markers = {}
             grid = st.columns(3)
             for i, column in enumerate(st.session_state.marker_columns):
                 with grid[i % 3]:
-                    markers[column] = st.checkbox(MARKER_NAMES.get(column, column), key=column)
+                    markers[column] = st.checkbox(MARKER_NAMES.get(column, column), key=column,
+                                                  disabled=no_list)
 
         submitted = st.button("Predecir", type="primary", key="predict")
+        # on_click: el callback se ejecuta antes de recargar, así la página ya sale vacía
+        st.button("Nuevo producto", key="reset", on_click=reset_form,
+                  help="Borra todos los datos y el resultado")
 
 # ----- Lógica al pulsar Predecir -----
 if submitted:
@@ -329,13 +368,17 @@ if submitted:
         errors.append("Faltan nutrientes obligatorios: " + ", ".join(missing) + ".")
     if not no_list and not ingredients.strip():
         errors.append("Escribe los ingredientes o marca que no tiene lista.")
+    # Comprobaciones lógicas (saturadas > grasas, energía en kJ...): src/label_checks.py
+    check_errors, warnings = check_label(values, category)
+    errors += check_errors
 
     if errors:
-        st.session_state.result = {"nova": None, "proba": None, "errors": errors}
+        st.session_state.result = {"nova": None, "proba": None, "errors": errors, "warnings": []}
     else:
         # Mismas reglas que en src/build_dataset.py (paso 7)
         if no_list:
             n_ingredients, additives = 1, 0          # sin lista = un ingrediente, sin aditivos
+            markers = {k: False for k in markers}    # y ningún marcador (como en el dataset)
         else:
             n_ingredients, additives = contar_ingredientes(ingredients), additives_n
 
@@ -351,7 +394,8 @@ if submitted:
         proba = model.predict_proba(X)[0]
         proba_by_class = {int(c): float(p) for c, p in zip(model.classes_, proba)}
         nova = max(proba_by_class, key=proba_by_class.get)   # la clase más probable
-        st.session_state.result = {"nova": nova, "proba": proba_by_class, "errors": []}
+        st.session_state.result = {"nova": nova, "proba": proba_by_class, "errors": [],
+                                   "warnings": warnings}
 
 # ----- Columna derecha: resultado -----
 with col_result:

@@ -219,6 +219,24 @@
 .st-key-predict button:hover { filter: brightness(1.08); }
 .st-key-predict button:focus-visible { outline: 2px solid var(--text); outline-offset: 3px; }
 
+/* Botón NUEVO PRODUCTO: secundario, solo con borde para que no compita con Predecir */
+.st-key-reset { margin-top: 10px; width: 100% !important; }
+.st-key-reset button {
+  width: 100% !important;
+  height: 44px;
+  background: transparent !important;
+  border: 1.5px solid var(--line-soft) !important;
+  border-radius: 10px !important;
+  color: var(--muted) !important;
+}
+.st-key-reset button p {
+  font-family: var(--font-mono) !important;
+  font-size: 13px !important;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.st-key-reset button:hover { border-color: var(--text) !important; color: var(--text) !important; }
+
 /* ---------- 9. Columna de resultado ---------- */
 /* Se queda fija al hacer scroll: el resultado se ve sin tener que subir */
 div[data-testid="stColumn"]:has(.rf-result-head) { position: sticky; top: 1.5rem; align-self: flex-start; }
@@ -245,6 +263,7 @@ div[data-testid="stColumn"]:has(.rf-result-head) { position: sticky; top: 1.5rem
 }
 .rf-empty strong { color: var(--lime); }
 .rf-error { border-color: var(--coral); color: var(--coral); line-height: 1.6; }
+.rf-warning { border-style: solid; border-color: #F2D06B; color: #F2D06B; margin-top: -12px; }
 
 .rf-result {
   display: flex;
