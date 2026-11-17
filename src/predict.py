@@ -9,8 +9,8 @@ import pandas as pd
 
 from src.modeling import CATEGORY, MODELS_DIR
 
-# TEMPORAL: cambiar a "best_model.joblib" cuando esté mergeada la M08
-MODEL_PATH = MODELS_DIR / "xgboost_m05.joblib"
+# Modelo final de M08 (se genera con notebooks/04_m08_compare_models.ipynb, en Docker)
+MODEL_PATH = MODELS_DIR / "m08_xgboost.joblib"
 
 
 def load_bundle(path=MODEL_PATH):
