@@ -74,7 +74,7 @@ def guardar_feedback(fila, path=FEEDBACK_PATH):
     _validar(fila)
 
     path.parent.mkdir(parents=True, exist_ok=True)
-    primera_vez = not path.exists()   # solo la primera vez se escribe la cabecera
+    primera_vez = not path.exists() or path.stat().st_size == 0   # solo la primera vez se escribe la cabecera
     pd.DataFrame([fila]).reindex(columns=COLUMNS).to_csv(
         path, mode="a", header=primera_vez, index=False)
     return True
