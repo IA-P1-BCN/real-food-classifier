@@ -1,0 +1,20 @@
+/* Estilos propios de la app (lo que no cubre el tema de config.toml) */
+
+[data-testid="stMainBlockContainer"] {padding-top: 2rem;}
+.nova-card {border-radius: 1rem; padding: 1.4rem 1.6rem; color: white; margin-bottom: 1rem;}
+.nova-card .big {font-size: 3rem; font-weight: 800; line-height: 1;}
+.nova-card .name {font-size: 1.4rem; font-weight: 700; margin-top: .3rem;}
+.nova-card .desc {opacity: .9; margin-top: .2rem;}
+.bar-row {margin: .45rem 0;}
+.bar-label {display: flex; justify-content: space-between; font-size: .9rem; margin-bottom: .15rem;}
+.bar-bg {background: #E3E8DF; border-radius: 999px; height: .7rem; overflow: hidden;}
+.bar-fill {height: 100%; border-radius: 999px;}
+[data-testid="stMainBlockContainer"] {padding-top: 2rem;}
+
+/* La columna del resultado se queda fija al hacer scroll: se ve sin tener que subir */
+div[data-testid="stColumn"]:has(.result-anchor) {position: sticky; top: 4rem; align-self: flex-start;}
+
+/* Tarjetas del formulario en blanco para que destaquen sobre el fondo verde. */
+
+[class*="st-key-card"] {background: #FFFFFF;}
+.legend-chip {display: inline-block; width: .8rem; height: .8rem; border-radius: 50%; margin-right: .5rem; vertical-align: middle;}
