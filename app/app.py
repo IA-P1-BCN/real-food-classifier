@@ -1,7 +1,7 @@
-"""A01: app de Streamlit con diseño "C · Lab".
+"""A01 + A04: app de Streamlit con diseño "C · Lab".
 
 Formulario con forma de etiqueta nutricional -> predicción del grupo NOVA con probabilidades.
-De momento usa un modelo provisional (placeholder); en A04 se cambia por el mejor modelo de M08.
+Usa el mejor modelo de M08 (XGBoost). La carga y el formato de la fila están en src/predict.py.
 
 Arrancar, desde la raíz del repo:   streamlit run app/app.py
 Tema (colores y fuentes): .streamlit/config.toml · Estilos propios: app/style.css
@@ -9,10 +9,7 @@ Tema (colores y fuentes): .streamlit/config.toml · Estilos propios: app/style.c
 import sys
 from pathlib import Path
 
-import pandas as pd
 import streamlit as st
-from sklearn.pipeline import Pipeline
-from sklearn.tree import DecisionTreeClassifier
 
 # Streamlit solo añade app/ al path: añadimos la raíz para poder importar src/
 ROOT = Path(__file__).resolve().parents[1]
@@ -22,9 +19,8 @@ from src.build_dataset import contar_ingredientes  # noqa: E402  (misma regla qu
 from src.ingredient_markers import detect_markers, find_additives  # noqa: E402
 from src.label_checks import check_label  # noqa: E402  (mismas reglas que la limpieza de E01)
 from src.label_extraction import PNNS_GROUPS_2  # noqa: E402  (las 42 subcategorías)
-from src.modeling import (  # noqa: E402
-    CATEGORY, TARGET, build_preprocessor, get_feature_columns, load_train,
-)
+from src.modeling import CATEGORY  # noqa: E402
+from src.predict import MODEL_PATH, load_bundle, predict_nova  # noqa: E402  (A04)
 
 # ---------------------------------------------------------------- Datos fijos de la interfaz
 # Nombre, descripción y color de acento de cada grupo NOVA
@@ -121,27 +117,10 @@ SHORT_NAMES = {"saturated-fat_100g": "Grasas saturadas", "sugars_100g": "Azúcar
 
 
 # ---------------------------------------------------------------- Modelo
-@st.cache_resource  # se entrena una sola vez; las siguientes recargas lo reutilizan
+@st.cache_resource  # se carga una sola vez; las siguientes recargas lo reutilizan
 def load_model():
-    """Modelo PROVISIONAL: árbol de decisión pequeño, entrenado al arrancar con el train.
-    Solo sirve para comprobar que la app funciona. En A04 esta función cargará
-    el mejor modelo guardado con joblib (M08) y el resto de la app no cambia."""
-    df = load_train()
-    cols = get_feature_columns(df)
-    model = Pipeline([
-        ("prep", build_preprocessor(cols, log_skewed=False, scale=False)),  # árboles: sin log ni escala
-        ("clf", DecisionTreeClassifier(max_depth=8, min_samples_leaf=50,
-                                       class_weight="balanced", random_state=42)),
-    ])
-    model.fit(df[cols["all"]], df[TARGET])
-    return model, cols
-
-
-def build_row(values, cols):
-    """Pasa lo que ha escrito el usuario a un DataFrame de una fila con las columnas del modelo.
-    Lo que se deja vacío va como NaN: el pipeline lo imputa igual que en el entrenamiento."""
-    row = {c: values.get(c) for c in cols["all"]}
-    return pd.DataFrame([row]).astype({c: "float64" for c in cols["numeric"]})
+    """Mejor modelo de M08 (XGBoost). El formato de la fila se prepara en src/predict.py."""
+    return load_bundle()
 
 
 def autodetect_from_ingredients():
@@ -214,7 +193,7 @@ def render_header():
         <header class="rf-header">
             <div class="rf-topbar">
                 <span class="rf-eyebrow">// Clasificador NOVA · IA School</span>
-                <span class="rf-pill"><span class="rf-dot"></span>Modelo provisional</span>
+                <span class="rf-pill"><span class="rf-dot"></span>Modelo XGBoost</span>
             </div>
             <h1 class="rf-title">Real Food<br><span class="rf-accent">Classifier</span></h1>
             <p class="rf-subtitle">Copia los datos de la etiqueta y descubre su <strong>grado de procesamiento</strong>.</p>
@@ -281,10 +260,16 @@ st.html(Path(__file__).parent / "style.css")   # Streamlit lo envuelve en <style
 # Guardamos el último resultado para que no se pierda si la página se recarga
 st.session_state.setdefault("result", {"nova": None, "proba": None, "errors": [], "warnings": []})
 
-with st.spinner("Preparando el modelo (solo la primera vez)..."):
-    model, cols = load_model()
+# models/ no está en git: si falta el fichero, avisamos en vez de mostrar un error de Python
+if not MODEL_PATH.exists():
+    st.error(f"Falta el modelo ({MODEL_PATH.name}). "
+             "Ejecuta notebooks/04_m08_compare_models.ipynb en Docker para generarlo.")
+    st.stop()
+
+with st.spinner("Cargando el modelo (solo la primera vez)..."):
+    bundle = load_model()
 # Marcadores que usa el modelo (el callback de autodetección los necesita)
-st.session_state.marker_columns = [c for c in cols["binary"] if c != "sin_lista_ingredientes"]
+st.session_state.marker_columns = [c for c in bundle["features"] if c.startswith("tiene_")]
 
 render_header()
 col_label, col_result = st.columns([1.1, 1], gap="large")
@@ -390,9 +375,9 @@ if submitted:
             "additives_n": additives,
         })
 
-        X = build_row(values, cols)
-        proba = model.predict_proba(X)[0]
-        proba_by_class = {int(c): float(p) for c, p in zip(model.classes_, proba)}
+        # predict_nova ordena las columnas, fija las categorías y suma el offset (src/predict.py)
+        classes, proba, X = predict_nova(values, bundle)
+        proba_by_class = dict(zip(classes, map(float, proba)))
         nova = max(proba_by_class, key=proba_by_class.get)   # la clase más probable
         st.session_state.result = {"nova": nova, "proba": proba_by_class, "errors": [],
                                    "warnings": warnings}
