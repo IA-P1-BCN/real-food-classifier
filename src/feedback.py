@@ -56,6 +56,14 @@ def _validar(fila):
             raise ValueError(mensaje)
 
 
+def es_valida(fila):
+    try:
+        _validar(fila)
+    except ValueError:
+        return False
+    return True
+
+
 def guardar_feedback(fila, path=FEEDBACK_PATH):
     """Valida una fila de feedback y la añade al CSV. Devuelve True si se guardó.
     `fila` es un dict con las columnas de COLUMNS; id_feedback y fecha se rellenan solos.
