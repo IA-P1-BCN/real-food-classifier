@@ -53,12 +53,12 @@ def evaluar(modelo, test, features, categorias):
 
 
 def cargar_feedback(path=FEEDBACK_PATH):
-    if not path.exists():
+    df = pd.read_csv(path).drop_duplicates("id_feedback") if path.exists() else pd.DataFrame()
+    if df.empty:
         return pd.DataFrame(columns=COLUMNS + [TARGET, "peso"]), {"total": 0, "usadas": 0}
-    df = pd.read_csv(path).drop_duplicates("id_feedback")
     total = len(df)
     df = df[df.apply(lambda fila: es_valida(fila.to_dict()), axis=1)]
-    clave = df["product_name"].str.strip().str.lower().fillna(df["id_feedback"])
+    clave = df["product_name"].astype("string").str.strip().str.lower().fillna(df["id_feedback"])
     df = df.assign(clave=clave).sort_values("fecha").drop_duplicates("clave", keep="last")
     df = df.drop(columns="clave")
     df[TARGET] = df["nova_correcto"].astype(int)
@@ -67,7 +67,7 @@ def cargar_feedback(path=FEEDBACK_PATH):
 
 
 def _claves_producto(df):
-    nombre = df["product_name"].str.strip().str.lower()
+    nombre = df["product_name"].astype("string").str.strip().str.lower()
     return pd.concat([nombre, df[NUTRIENTES].round(2)], axis=1)
 
 
