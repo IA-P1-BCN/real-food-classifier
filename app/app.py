@@ -1,10 +1,10 @@
-"""A01: app básica de Streamlit.
+"""A01: app de Streamlit con diseño "C · Lab".
 
-Formulario manual con los datos de la etiqueta -> predicción del grupo NOVA con probabilidades.
+Formulario con forma de etiqueta nutricional -> predicción del grupo NOVA con probabilidades.
 De momento usa un modelo provisional (placeholder); en A04 se cambia por el mejor modelo de M08.
 
 Arrancar, desde la raíz del repo:   streamlit run app/app.py
-(los colores del tema están en .streamlit/config.toml)
+Tema (colores y fuentes): .streamlit/config.toml · Estilos propios: app/style.css
 """
 import sys
 from pathlib import Path
@@ -19,21 +19,19 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from src.build_dataset import contar_ingredientes  # noqa: E402  (misma regla que el dataset)
+from src.ingredient_markers import detect_markers, find_additives  # noqa: E402
 from src.label_extraction import PNNS_GROUPS_2  # noqa: E402  (las 42 subcategorías)
 from src.modeling import (  # noqa: E402
     CATEGORY, TARGET, build_preprocessor, get_feature_columns, load_train,
 )
 
-# Nombre, descripción, color y emoji de cada grupo NOVA (semáforo: verde -> rojo)
+# ---------------------------------------------------------------- Datos fijos de la interfaz
+# Nombre, descripción y color de acento de cada grupo NOVA
 NOVA = {
-    1: {"name": "Sin procesar", "desc": "Alimentos naturales o mínimamente procesados",
-        "color": "#2E7D32", "emoji": "🥦"},
-    2: {"name": "Ingrediente culinario", "desc": "Aceites, sal, azúcar, mantequilla...",
-        "color": "#F9A825", "emoji": "🧂"},
-    3: {"name": "Procesado", "desc": "Conservas, quesos, pan artesano...",
-        "color": "#EF6C00", "emoji": "🥫"},
-    4: {"name": "Ultraprocesado", "desc": "Formulaciones industriales con aditivos",
-        "color": "#C62828", "emoji": "🍭"},
+    1: {"name": "Sin procesar", "desc": "Naturales o mínimamente procesados", "color": "#7FD49B"},
+    2: {"name": "Ingrediente culinario", "desc": "Aceites, sal, azúcar, mantequilla", "color": "#F2D06B"},
+    3: {"name": "Procesado", "desc": "Conservas, quesos, pan artesano", "color": "#FFA36B"},
+    4: {"name": "Ultraprocesado", "desc": "Formulaciones industriales con aditivos", "color": "#FF7A6B"},
 }
 
 # Nombre en español de cada categoría (lo que ve el usuario).
@@ -104,17 +102,22 @@ MARKER_NAMES = {
     "tiene_aceite": "Aceite",
 }
 
-# Nutrientes del formulario: (columna del dataset, etiqueta, obligatorio)
+# Filas de la etiqueta: (columna del dataset, texto, unidad, ¿subfila?, ¿obligatorio?, nota)
 NUTRIENTS = [
-    ("energy-kcal_100g", "Energía (kcal)", True),
-    ("fat_100g", "Grasas (g)", True),
-    ("saturated-fat_100g", "Grasas saturadas (g)", True),
-    ("carbohydrates_100g", "Hidratos de carbono (g)", True),
-    ("sugars_100g", "Azúcares (g)", True),
-    ("fiber_100g", "Fibra (g) · opcional", False),   # en la UE no es obligatoria en la etiqueta
-    ("proteins_100g", "Proteínas (g)", True),
-    ("salt_100g", "Sal (g)", True),
+    ("energy-kcal_100g", "Energía", "kcal", False, True, "en kcal, no kJ"),  # muchas etiquetas ponen primero los kJ
+    ("fat_100g", "Grasas", "g", False, True, ""),
+    ("saturated-fat_100g", "de las cuales saturadas", "g", True, True, ""),
+    ("carbohydrates_100g", "Hidratos de carbono", "g", False, True, ""),
+    ("sugars_100g", "de los cuales azúcares", "g", True, True, ""),
+    ("fiber_100g", "Fibra", "g", False, False, "opcional"),   # en la UE no es obligatoria
+    ("proteins_100g", "Proteínas", "g", False, True, ""),
+    ("salt_100g", "Sal", "g", False, True, ""),
+    ("fruits-vegetables-legumes_100g", "Frutas, verduras y legumbres", "%", False, False, "opcional"),
 ]
+
+# Nombre corto para los mensajes de error (las subfilas no se entienden solas)
+SHORT_NAMES = {"saturated-fat_100g": "Grasas saturadas", "sugars_100g": "Azúcares"}
+
 
 # ---------------------------------------------------------------- Modelo
 @st.cache_resource  # se entrena una sola vez; las siguientes recargas lo reutilizan
@@ -140,148 +143,216 @@ def build_row(values, cols):
     return pd.DataFrame([row]).astype({c: "float64" for c in cols["numeric"]})
 
 
-# ---------------------------------------------------------------- Piezas visuales
-def result_card(nova):
-    """Tarjeta grande del color de la clase predicha."""
-    info = NOVA[nova]
-    st.markdown(f"""
-<div class="nova-card" style="background:{info['color']}">
-  <div class="big">{info['emoji']} NOVA {nova}</div>
-  <div class="name">{info['name']}</div>
-  <div class="desc">{info['desc']}</div>
-</div>""", unsafe_allow_html=True)
+def autodetect_from_ingredients():
+    """Se ejecuta cuando cambia la lista de ingredientes (al salir del cuadro de texto).
+    Marca las casillas tiene_* y rellena el número de aditivos a partir del texto.
+    Escribimos en st.session_state con la misma key que cada widget: así la casilla
+    aparece marcada en la siguiente recarga. El usuario puede corregirlas después."""
+    text = st.session_state.ingredients_text
+    for column, found in detect_markers(text).items():
+        if column in st.session_state.marker_columns:   # solo los marcadores que usa el modelo
+            st.session_state[column] = found
+    st.session_state.additives_n = len(find_additives(text))
+    st.session_state.autodetected = bool(text.strip())
 
 
-def probability_bars(classes, proba):
-    """Una barra por clase, con el color de su grupo NOVA."""
-    html = ""
-    for c, p in zip(classes, proba):
-        info = NOVA[c]
-        html += f"""
-<div class="bar-row">
-  <div class="bar-label"><span>NOVA {c} · {info['name']}</span><b>{p:.0%}</b></div>
-  <div class="bar-bg"><div class="bar-fill" style="width:{p:.1%};background:{info['color']}"></div></div>
-</div>"""
-    st.markdown(html, unsafe_allow_html=True)
+# ---------------------------------------------------------------- Utilidades de HTML
+def html(fragmento):
+    """Pinta HTML con st.markdown.
+    Quitamos las sangrías porque Markdown convierte las líneas con 4 espacios
+    al inicio en bloques de código. Unimos con espacio para no pegar palabras."""
+    limpio = " ".join(linea.strip() for linea in fragmento.splitlines())
+    st.markdown(limpio, unsafe_allow_html=True)
+
+
+def label_row(text, unit, sub=False, note=""):
+    """Una fila de la etiqueta: nombre | (input, lo pone quien llama) | unidad.
+    Devuelve la columna del medio para meter ahí el input."""
+    c_name, c_input, c_unit = st.columns([3, 1.1, 0.45], vertical_alignment="center")
+    with c_name:
+        extra = f" <small>{note}</small>" if note else ""
+        html(f'<div class="rf-row-label{" sub" if sub else ""}">{text}{extra}</div>')
+    with c_unit:
+        html(f'<span class="rf-unit">{unit}</span>')
+    return c_input
+
+
+# ---------------------------------------------------------------- Componentes visuales
+def render_header():
+    """Cabecera: etiqueta superior, píldora de estado y título grande."""
+    html("""
+        <header class="rf-header">
+            <div class="rf-topbar">
+                <span class="rf-eyebrow">// Clasificador NOVA · IA School</span>
+                <span class="rf-pill"><span class="rf-dot"></span>Modelo provisional</span>
+            </div>
+            <h1 class="rf-title">Real Food<br><span class="rf-accent">Classifier</span></h1>
+            <p class="rf-subtitle">Copia los datos de la etiqueta y descubre su <strong>grado de procesamiento</strong>.</p>
+        </header>
+    """)
+
+
+def render_result(result):
+    """Columna derecha: sello del resultado (o mensaje vacío / errores) + leyenda con probabilidades."""
+    html('<div class="rf-result-head"><h2>Resultado</h2></div>')
+    nova, proba = result["nova"], result["proba"]
+
+    if result["errors"]:
+        html(f'<div class="rf-empty rf-error">{"<br>".join(result["errors"])}</div>')
+    elif nova is None:
+        html('<div class="rf-empty">Rellena la etiqueta y pulsa <strong>Predecir</strong>.</div>')
+    else:
+        info = NOVA[nova]
+        # --nova es una variable CSS: el sello toma el color del grupo predicho
+        html(f"""
+            <div class="rf-result">
+                <div class="rf-stamp" style="--nova: {info['color']}">
+                    <span class="rf-stamp-label">NOVA</span>
+                    <span class="rf-stamp-num">{nova}</span>
+                    <span class="rf-stamp-name">{info['name']}</span>
+                </div>
+                <div class="rf-result-text">
+                    <span class="rf-result-name">{info['name']}</span>
+                    <span class="rf-result-desc">{info['desc']}.</span>
+                    <span class="rf-result-conf">Confianza: {proba[nova]:.0%}</span>
+                </div>
+            </div>
+        """)
+
+    # Leyenda: cada fila lleva de fondo una barra con la probabilidad de su grupo.
+    # El color al 15 % de opacidad se consigue añadiendo "26" (hex) al color
+    rows = ""
+    for n, info in NOVA.items():
+        p = proba.get(n) if proba else None
+        active = " active" if n == nova else ""
+        bar = f'style="--p: {p:.1%}; --c-soft: {info["color"]}26"' if p is not None else ""
+        p_text = f'<span class="rf-legend-p" style="color: {info["color"]}">{p:.0%}</span>' if p is not None else ""
+        rows += f"""
+            <div class="rf-legend-row{active}" {bar}>
+                <span class="rf-legend-n" style="color: {info['color']}">NOVA {n}</span>
+                <span class="rf-legend-name">{info['name']}</span>
+                <span class="rf-legend-desc">{info['desc']}</span>
+                {p_text}
+            </div>
+        """
+    title = '<div class="rf-legend-title">Probabilidad de cada grupo</div>' if proba else ""
+    html(f'<div class="rf-legend">{title}{rows}</div>')
+    html('<p class="rf-footer">Datos: Open Food Facts (ODbL) · Proyecto IA School, Factoría F5</p>')
 
 
 # ---------------------------------------------------------------- Página
-st.set_page_config(page_title="Real Food Classifier", page_icon="🥦", layout="wide")
-st.html(Path(__file__).parent / "style.css")
+st.set_page_config(page_title="Real Food Classifier", page_icon="🥦", layout="wide",
+                   initial_sidebar_state="collapsed")
+st.html(Path(__file__).parent / "style.css")   # Streamlit lo envuelve en <style> por ser .css
 
-# Barra lateral: explicación de los grupos NOVA
-with st.sidebar:
-    st.header("¿Qué es NOVA?")
-    st.write("Clasifica los alimentos según **cuánto se han procesado**, no según sus nutrientes.")
-    for n, info in NOVA.items():
-        st.markdown(f"<span class='legend-chip' style='background:{info['color']}'></span>"
-                    f"**NOVA {n} · {info['name']}**<br><small>{info['desc']}</small>",
-                    unsafe_allow_html=True)
-    st.divider()
-    st.caption("Datos: Open Food Facts (ODbL) · Proyecto IA School, Factoría F5")
-
-st.title("🥦 Real Food Classifier")
-st.markdown("Copia los datos de la etiqueta y descubre su **grado de procesamiento**.")
-st.warning("Modelo provisional: las predicciones todavía no son las del modelo final.", icon="🚧")
+# Guardamos el último resultado para que no se pierda si la página se recarga
+st.session_state.setdefault("result", {"nova": None, "proba": None, "errors": []})
 
 with st.spinner("Preparando el modelo (solo la primera vez)..."):
     model, cols = load_model()
+# Marcadores que usa el modelo (el callback de autodetección los necesita)
+st.session_state.marker_columns = [c for c in cols["binary"] if c != "sin_lista_ingredientes"]
 
-form_col, result_col = st.columns([3, 2], gap="large")
+render_header()
+col_label, col_result = st.columns([1.1, 1], gap="large")
 
-# ---------------------------------------------------------------- Formulario
-with form_col:
-    # st.form: la app no se recalcula con cada tecla, solo al pulsar el botón
-    with st.form("label_form", border=False):
-        with st.container(border=True, key="card_producto"):
-            st.subheader("🏷️ Producto")
-            # index=None: nada elegido por defecto (así "unknown" nunca es el valor por defecto).
-            # key: en A02/A03 Gemini podrá proponer la categoría escribiendo en st.session_state
-            # format_func: muestra el nombre en español, pero category sigue valiendo el inglés
-            category = st.selectbox("Categoría", CATEGORY_OPTIONS, index=None,
-                                    format_func=lambda c: CATEGORY_ES.get(c, c),
-                                    placeholder="Elige una categoría", key=CATEGORY)
-        with st.container(border=True, key="card_nutrientes"):
-            st.subheader("📊 Información nutricional")
-            st.caption("Por 100 g o 100 ml. Deja vacío lo que no aparezca en la etiqueta.")
-            values = {}
-            left, right = st.columns(2)
-            for i, (column, label, required) in enumerate(NUTRIENTS):
-                # value=None deja la casilla vacía (en vez de 0): "no lo sé" no es lo mismo que "cero"
-                with (left if i % 2 == 0 else right):
+# ----- Columna izquierda: la etiqueta nutricional -----
+with col_label:
+    # Contenedor normal (no st.form): así la lista de ingredientes puede marcar las casillas
+    # en cuanto se pega. El modelo solo predice al pulsar el botón
+    with st.container(key="label_card"):
+        html('<h2 class="rf-label-title">Información nutricional</h2><div class="rf-rule-thin"></div>')
+
+        html('<p class="rf-field-label">Categoría del producto</p>')
+        # index=None: nada elegido por defecto (así "unknown" nunca es el valor por defecto).
+        # format_func: muestra el nombre en español, pero category sigue valiendo el inglés.
+        # key: en A03 Gemini podrá proponer la categoría escribiendo en st.session_state
+        category = st.selectbox("Categoría del producto", CATEGORY_OPTIONS, index=None,
+                                format_func=lambda c: CATEGORY_ES.get(c, c),
+                                placeholder="Elige una categoría", key=CATEGORY,
+                                label_visibility="collapsed")   # el texto ya va arriba
+
+        html("""
+            <div class="rf-rule-thick"></div>
+            <div class="rf-per"><span>Por 100 g / 100 ml</span><span>vacío = no aparece</span></div>
+        """)
+
+        # Una fila por nutriente. El key "rows_..." activa el estilo de filas del CSS
+        values = {}
+        with st.container(key="rows_nutrientes"):
+            for column, text, unit, sub, required, note in NUTRIENTS:
+                with label_row(text, unit, sub, note):
+                    # value=None deja la casilla vacía: "no lo sé" no es lo mismo que "cero"
                     values[column] = st.number_input(
-                        label, min_value=0.0, value=None, step=0.1, format="%.2f", key=column,
-                        # Solo la energía lleva ayuda: muchas etiquetas ponen primero los kJ
-                        help="Copia el valor en kcal, no en kJ" if column == "energy-kcal_100g" else None,
-                    )
-            values["fruits-vegetables-legumes_100g"] = st.number_input(
-                "Frutas, verduras y legumbres (%) · opcional", min_value=0.0, max_value=100.0,
-                value=None, step=1.0, key="fruits-vegetables-legumes_100g",
-                help="Solo si la etiqueta lo indica")
+                        text, min_value=0.0, max_value=100.0 if unit == "%" else None,
+                        value=None, step=0.1, format="%.2f", placeholder="-",
+                        label_visibility="collapsed", key=column)
 
-        with st.container(border=True, key="card_ingredientes"):
-            st.subheader("🧾 Ingredientes")
+        # ----- Ingredientes -----
+        with st.container(key="sec_ingredientes"):
+            html('<div class="rf-rule-thick"></div><h3 class="rf-section-title">Ingredientes</h3>')
             no_list = st.toggle("El producto no tiene lista de ingredientes",
                                 key="sin_lista_ingredientes")
+            # on_change: al salir del cuadro (o Ctrl+Enter) se marcan las casillas solas
             ingredients = st.text_area("Lista de ingredientes", key="ingredients_text",
-                                       placeholder="Harina de trigo, azúcar, aceite de girasol...")
-            additives_n = st.number_input("Número de aditivos (E-xxx)", min_value=0, value=0,
-                                          step=1, key="additives_n")
+                                       placeholder="Pega aquí la lista de ingredientes de la etiqueta",
+                                       on_change=autodetect_from_ingredients)
 
-            st.markdown("**¿Qué aparece en los ingredientes?**")
+            with st.container(key="rows_aditivos"):
+                with label_row("Número de aditivos", "E-xxx"):
+                    # Sin value=: el valor inicial (0) va en session_state, porque el callback
+                    # de autodetección también lo escribe (Streamlit avisa si se hacen las dos cosas)
+                    st.session_state.setdefault("additives_n", 0)
+                    additives_n = st.number_input("Número de aditivos", min_value=0, step=1,
+                                                  label_visibility="collapsed", key="additives_n")
+
+            html('<p class="rf-field-label top">¿Qué aparece en los ingredientes?</p>')
+            if st.session_state.get("autodetected"):
+                html('<p class="rf-hint">Marcado automáticamente a partir de la lista. Revísalo y corrige si hace falta.</p>')
             markers = {}
-            marker_columns = [c for c in cols["binary"] if c != "sin_lista_ingredientes"]
             grid = st.columns(3)
-            for i, column in enumerate(marker_columns):
+            for i, column in enumerate(st.session_state.marker_columns):
                 with grid[i % 3]:
                     markers[column] = st.checkbox(MARKER_NAMES.get(column, column), key=column)
 
-        submitted = st.form_submit_button("🔍 Predecir", type="primary", width="stretch")
+        submitted = st.button("Predecir", type="primary", key="predict")
 
-# ---------------------------------------------------------------- Resultado
-with result_col:
-    st.markdown('<div class="result-anchor"></div>', unsafe_allow_html=True)  # marca para el CSS sticky
-    st.subheader("Resultado")
-    if not submitted:
-        st.info("Rellena el formulario y pulsa **Predecir**.", icon="👈")
+# ----- Lógica al pulsar Predecir -----
+if submitted:
+    # Validaciones básicas antes de predecir
+    missing = [SHORT_NAMES.get(column, text) for column, text, unit, sub, required, note in NUTRIENTS
+               if required and values[column] is None]
+    errors = []
+    if category is None:
+        errors.append("Elige una categoría.")
+    if missing:
+        errors.append("Faltan nutrientes obligatorios: " + ", ".join(missing) + ".")
+    if not no_list and not ingredients.strip():
+        errors.append("Escribe los ingredientes o marca que no tiene lista.")
+
+    if errors:
+        st.session_state.result = {"nova": None, "proba": None, "errors": errors}
     else:
-        # Validaciones básicas antes de predecir
-        missing = [label for column, label, required in NUTRIENTS
-                   if required and values[column] is None]
-        errors = []
-        if category is None:
-            errors.append("Elige una categoría.")
-        if missing:
-            errors.append("Faltan nutrientes obligatorios: " + ", ".join(missing))
-        if not no_list and not ingredients.strip():
-            errors.append("Escribe los ingredientes o marca que no tiene lista.")
-
-        if errors:
-            for e in errors:
-                st.error(e, icon="⚠️")
+        # Mismas reglas que en src/build_dataset.py (paso 7)
+        if no_list:
+            n_ingredients, additives = 1, 0          # sin lista = un ingrediente, sin aditivos
         else:
-            # Mismas reglas que en src/build_dataset.py (paso 7)
-            if no_list:
-                n_ingredients, additives = 1, 0          # sin lista = un ingrediente, sin aditivos
-            else:
-                n_ingredients, additives = contar_ingredientes(ingredients), additives_n
+            n_ingredients, additives = contar_ingredientes(ingredients), additives_n
 
-            values.update({k: int(v) for k, v in markers.items()})   # True/False -> 1/0
-            values.update({
-                CATEGORY: category,
-                "sin_lista_ingredientes": int(no_list),
-                "n_ingredientes": n_ingredients or None,  # 0 (texto ilegible) -> vacío
-                "additives_n": additives,
-            })
+        values.update({k: int(v) for k, v in markers.items()})   # True/False -> 1/0
+        values.update({
+            CATEGORY: category,
+            "sin_lista_ingredientes": int(no_list),
+            "n_ingredientes": n_ingredients or None,  # 0 (texto ilegible) -> vacío
+            "additives_n": additives,
+        })
 
-            X = build_row(values, cols)
-            proba = model.predict_proba(X)[0]
-            classes = [int(c) for c in model.classes_]
-            predicted = classes[proba.argmax()]
+        X = build_row(values, cols)
+        proba = model.predict_proba(X)[0]
+        proba_by_class = {int(c): float(p) for c, p in zip(model.classes_, proba)}
+        nova = max(proba_by_class, key=proba_by_class.get)   # la clase más probable
+        st.session_state.result = {"nova": nova, "proba": proba_by_class, "errors": []}
 
-            result_card(predicted)
-            st.markdown("**Probabilidad de cada grupo**")
-            probability_bars(classes, proba)
-
-            with st.expander("Ver los datos que recibe el modelo"):
-                st.dataframe(X.T.astype(str).rename(columns={0: "valor"}), width="stretch")
+# ----- Columna derecha: resultado -----
+with col_result:
+    render_result(st.session_state.result)

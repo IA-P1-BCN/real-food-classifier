@@ -1,14 +1,12 @@
-# Tema de la app (colores y tipografía). Streamlit lo lee al arrancar desde la raíz del repo
+# Tema oscuro "C · Lab". Streamlit lo lee al arrancar desde la raíz del repo
 [theme]
-base = "light"
-primaryColor = "#2E7D32"              # verde: botones, casillas marcadas, foco
-backgroundColor = "#E8F1E4"           # fondo de la página
-secondaryBackgroundColor = "#F4F8F2"  # fondo de los campos del formulario
-textColor = "#1F2A1F"
-font = "Inter:https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap, sans-serif"
-headingFont = "Poppins:https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&display=swap, sans-serif"
-baseRadius = "0.75rem"                  # esquinas redondeadas
+base = "dark"
+primaryColor = "#C6F36B"              # lima: botón, casillas marcadas, foco
+backgroundColor = "#0E1311"           # fondo de la página
+secondaryBackgroundColor = "#151C19"  # fondo de la etiqueta y de los campos
+textColor = "#E8EFEA"
+font = "'Space Grotesk':https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap, sans-serif"
+codeFont = "'JetBrains Mono':https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap, monospace"
 
-[theme.sidebar]
-backgroundColor = "#D5E6CF"
-secondaryBackgroundColor = "#F4F8F2"
+[client]
+toolbarMode = "minimal"               # sin menú de desarrollador arriba a la derecha
