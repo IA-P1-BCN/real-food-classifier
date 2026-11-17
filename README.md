@@ -28,8 +28,11 @@ data/
   raw/          export original (no se sube)
   interim/      datos filtrados a España (no se sube)
   processed/    dataset limpio compartido
-notebooks/      EDA y experimentos
+notebooks/      EDA y experimentos (01-02 EDA, 03_mXX un modelo cada uno, 04_m08 comparación)
 src/            código reutilizable
+results/        métricas de cada modelo (Mxx-metrics.json) y matriz de confusión del modelo final
+reports/        figuras sueltas de modelos
+models/         modelos .joblib (no se sube: se regenera con el notebook)
 app/            aplicación (Streamlit)
 ```
 
@@ -65,6 +68,17 @@ python src/build_dataset.py
 ```
 
 Lee `data/raw/off_products.csv.gz` y regenera `data/interim/` y `data/processed/off_nova_clean.csv.gz`, con los pasos 1-8 de `notebooks/01_eda.ipynb` y el mismo split fijo. Tarda unos minutos.
+
+## Modelos
+
+Cada notebook `03_mXX_*` entrena un modelo y guarda sus métricas en `results/Mxx-metrics.json`: regresión logística (M01), KNN (M02), Random Forest (M03), XGBoost (M05), LightGBM (M06) y árbol de decisión (M09).
+
+`notebooks/04_m08_compare_models.ipynb` los compara con la misma métrica (validación cruzada) y entrena el modelo final: **XGBoost**.
+
+La carpeta `models/` no está en git. Para generar el modelo que usará la app:
+
+1. Ejecuta `notebooks/04_m08_compare_models.ipynb` de principio a fin (necesita `data/processed/off_nova_clean.csv.gz` y `results/M05-metrics.json`, que sí están en el repo).
+2. Se crean `models/m08_xgboost.joblib`, `results/M08-metrics.json` y `results/M08-confusion_matrix.png`.
 
 ## Estado
 
