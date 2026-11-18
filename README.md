@@ -179,7 +179,9 @@ Regenera `data/interim/` y `data/processed/off_nova_clean.csv.gz` con los pasos 
 
 ## Reentrenar con feedback
 
-La idea es que la app pregunte al usuario si el NOVA predicho es correcto y, si no, cuál es el correcto (**todavía no está conectado a la app**: ver [Estado](#estado)). Cada respuesta se guarda como una fila en `data/feedback/feedback.csv`. El fichero se crea solo la primera vez y no se sube a git. El formato está en `data/feedback/feedback_template.csv`.
+La app pregunta al usuario si el NOVA predicho es correcto y, si no, cuál es el correcto (F01). Cada respuesta se guarda como una fila en `data/feedback/feedback.csv`. El fichero se crea solo la primera vez y no se sube a git. El formato está en `data/feedback/feedback_template.csv`.
+
+Métricas en vivo (F02): http://localhost:8501/metricas. Muestran el accuracy, el F1 macro y la matriz de confusión calculados con `data/feedback/feedback.csv`, y se actualizan cada 5 s.
 
 ```
 app ─► guardar_feedback(fila) ─► data/feedback/feedback.csv
@@ -233,6 +235,6 @@ Con 0 feedback reproduce el F1 macro de M08 (0,9611). Avisa si hay menos de 100 
     - [x] Formulario de la etiqueta y predicción con el modelo final (A01, A04)
     - [x] Leer la etiqueta desde fotos con Gemini, dentro de la app (A02, A03)
     - [x] Pipeline de reentrenamiento con feedback (F03)
-    - [ ] Guardar el feedback del usuario desde la app (F01)
-    - [ ] Métricas en vivo a partir del feedback (F02)
+    - [x] Guardar el feedback del usuario desde la app (F01)
+    - [x] Métricas en vivo a partir del feedback (F02)
 - [ ] **Fase 4 · Informe y demo**
