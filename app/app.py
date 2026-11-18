@@ -263,7 +263,7 @@ st.session_state.setdefault("result", {"nova": None, "proba": None, "errors": []
 # models/ no está en git: si falta el fichero, avisamos en vez de mostrar un error de Python
 if not MODEL_PATH.exists():
     st.error(f"Falta el modelo ({MODEL_PATH.name}). "
-             "Ejecuta notebooks/04_m08_compare_models.ipynb en Docker para generarlo.")
+             "Genéralo con notebooks/04_m08_compare_models.ipynb (ver README).")
     st.stop()
 
 with st.spinner("Cargando el modelo (solo la primera vez)..."):
@@ -376,7 +376,7 @@ if submitted:
         })
 
         # predict_nova ordena las columnas, fija las categorías y suma el offset (src/predict.py)
-        classes, proba, X = predict_nova(values, bundle)
+        classes, proba, _ = predict_nova(values, bundle)
         proba_by_class = dict(zip(classes, map(float, proba)))
         nova = max(proba_by_class, key=proba_by_class.get)   # la clase más probable
         st.session_state.result = {"nova": nova, "proba": proba_by_class, "errors": [],
