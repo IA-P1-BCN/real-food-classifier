@@ -17,8 +17,9 @@ sys.path.insert(0, str(ROOT))
 
 from src.build_dataset import contar_ingredientes  # noqa: E402  (misma regla que el dataset)
 from src.ingredient_markers import detect_markers, find_additives  # noqa: E402
-from src.label_checks import check_label  # noqa: E402  (mismas reglas que la limpieza de E01)
-from src.label_extraction import PNNS_GROUPS_2  # noqa: E402  (las 42 subcategorías)
+from src.label_checks import check_label, check_ranges  # noqa: E402  (mismas reglas que la limpieza de E01)
+from src.label_extraction import (  # noqa: E402  (A02: lectura de la foto)
+    MAX_PHOTOS, PNNS_GROUPS_2, LabelExtractionError, extract_label)
 from src.modeling import CATEGORY  # noqa: E402
 from src.predict import MODEL_PATH, load_bundle, predict_nova  # noqa: E402  (A04)
 
@@ -151,6 +152,10 @@ def reset_form():
         st.session_state[column] = False              # casillas sin marcar
     st.session_state.autodetected = False
     st.session_state.result = {"nova": None, "proba": None, "errors": [], "warnings": []}
+    st.session_state.extraction = None
+    st.session_state.extraction_notes = None
+    # El uploader no se puede vaciar desde session_state: le cambiamos la key (ver render_photo_upload)
+    st.session_state.uploader_id = st.session_state.get("uploader_id", 0) + 1
 
 
 def clear_ingredients():
@@ -199,6 +204,136 @@ def render_header():
             <p class="rf-subtitle">Copia los datos de la etiqueta y descubre su <strong>grado de procesamiento</strong>.</p>
         </header>
     """)
+
+
+# ---------------------------------------------------------------- A03: leer la etiqueta con fotos
+# Nombre legible de cada nutriente para los mensajes (las subfilas usan el nombre corto)
+NUTRIENT_NAMES = {column: SHORT_NAMES.get(column, text) for column, text, *_ in NUTRIENTS}
+
+
+def fill_form(data, nutrients):
+    """Escribe lo leído en st.session_state con la key de cada widget del formulario.
+    Funciona porque se llama ANTES de dibujar el formulario en esta ejecución."""
+    # Nutrientes: float() porque los number_input son decimales (Streamlit falla si mezclas int y float)
+    for column, value in nutrients.items():
+        st.session_state[column] = None if value is None else float(value)
+
+    # Categoría: es una sugerencia, se preselecciona y el usuario la confirma o la cambia.
+    # "unknown" nunca va por defecto (regla de A01): mejor dejarla sin elegir
+    category = data["pnns_groups_2"]
+    st.session_state[CATEGORY] = category if category in CATEGORY_OPTIONS and category != "unknown" else None
+
+    # Ingredientes. Si no se ven, NO marcamos "sin lista": puede que el producto no la tenga,
+    # o que simplemente no esté en las fotos. Eso solo lo sabe el usuario
+    st.session_state.sin_lista_ingredientes = False
+    st.session_state.ingredients_text = data["ingredients_text"] or ""
+    if data["ingredients_text"]:
+        autodetect_from_ingredients()   # la misma función de A01: marca casillas y cuenta aditivos
+        # También se reconocen aditivos escritos con nombre ("ácido cítrico"): nos quedamos con el mayor
+        st.session_state.additives_n = max(st.session_state.additives_n, len(data["additives"]))
+    else:
+        for column in st.session_state.marker_columns:
+            st.session_state[column] = False
+        st.session_state.additives_n = 0
+        st.session_state.autodetected = False
+
+    # El resultado anterior era de otro producto: lo borramos
+    st.session_state.result = {"nova": None, "proba": None, "errors": [], "warnings": []}
+
+
+def read_label(files):
+    """A03: fotos -> datos de la etiqueta, con una barra de progreso.
+    Cada mensaje dice lo que el código está haciendo EN ESE MOMENTO: si algo falla,
+    el usuario sabe en qué paso ha sido. Devuelve el dict de extract_label o None."""
+    # Borramos lo del producto anterior: si esta lectura falla, no deben quedar
+    # en pantalla los avisos ni el "Hemos rellenado..." de la foto anterior
+    st.session_state.extraction = None
+    st.session_state.extraction_notes = None
+
+    progress = st.progress(0, text="1/4 · Preparando las fotos...")
+    photos = [f.getvalue() for f in files]   # extract_label acepta una lista de bytes
+
+    # El paso lento: una sola llamada que bloquea, por eso la barra no se mueve mientras tanto
+    progress.progress(25, text="2/4 · Leyendo la etiqueta (unos 5 s, más si tiene que reintentar)...")
+    try:
+        data = extract_label(photos)
+    except LabelExtractionError as e:
+        # Errores técnicos: sin API key, foto no válida, servicio caído, más de 4 fotos...
+        progress.empty()                     # quitamos la barra para que no se quede a medias
+        st.error(f"No se pudo leer la etiqueta: {e}")
+        return None
+
+    # ----- Casos en los que NO se puede predecir -----
+    # Primero is_food_label: si es False, extract_label ya pone has_nutrition_table a False
+    if not data["is_food_label"]:
+        progress.empty()
+        st.warning("Las fotos no parecen la etiqueta de un alimento, o no se leen bien. "
+                   "Prueba con otra foto más nítida y con buena luz.")
+        return None
+
+    if not data["has_nutrition_table"]:
+        progress.empty()
+        # El modelo se entrenó SIN productos sin tabla (sal, especias, infusiones, agua...)
+        st.warning("No se ha encontrado la tabla nutricional: este tipo de producto no está soportado. "
+                   "Si la tabla está en otra cara del envase, súbela también y vuelve a leer.")
+        return None
+
+    # ----- Paso 3: validar con las mismas reglas que la limpieza del dataset -----
+    progress.progress(50, text="3/4 · Comprobando los valores...")
+    nutrients = {column: data[column] for column, *_ in NUTRIENTS}
+    nutrients, range_errors = check_ranges(nutrients, NUTRIENT_NAMES)   # imposibles por campo
+    check_errors, check_warnings = check_label(nutrients, data["pnns_groups_2"])  # entre campos
+
+    # ----- Paso 4: rellenar el formulario -----
+    progress.progress(75, text="4/4 · Rellenando el formulario...")
+    fill_form(data, nutrients)
+    progress.empty()
+
+    st.session_state.extraction = data
+    # Guardamos los avisos para que sigan visibles aunque la página se recargue
+    st.session_state.extraction_notes = {
+        "errors": range_errors + check_errors,       # imposibles: no deja predecir hasta corregir
+        "warnings": check_warnings,                   # raros pero posibles
+        "no_ingredients": not data["ingredients_text"],
+        "no_category": st.session_state[CATEGORY] is None,
+    }
+    return data
+
+
+def render_photo_upload():
+    """A03: tarjeta para subir fotos de la etiqueta, encima del formulario."""
+    with st.container(key="photo_card"):
+        html('<h2 class="rf-label-title">Leer la etiqueta con fotos</h2>')
+        # Contador para poder vaciar el uploader: cada "Nuevo producto" le suma 1,
+        # la key cambia y Streamlit dibuja un uploader nuevo, sin fotos
+        st.session_state.setdefault("uploader_id", 0)
+        files = st.file_uploader(
+            f"Sube hasta {MAX_PHOTOS} fotos del mismo producto (delante, detrás, laterales)",
+            type=["jpg", "jpeg", "png", "webp"],   # formatos que Pillow abre sin plugins
+            accept_multiple_files=True,
+            key=f"photos_{st.session_state.uploader_id}")
+
+        # disabled: el botón no se puede pulsar hasta que haya al menos una foto
+        if st.button("Leer etiqueta", key="read_label", disabled=not files):
+            read_label(files)
+
+        # Para revisar los datos leídos (útil en la demo y para depurar)
+        if st.session_state.get("extraction"):
+            with st.expander("Ver los datos leídos"):
+                st.json(st.session_state.extraction)
+
+        notes = st.session_state.get("extraction_notes")
+        if notes:
+            st.success("Hemos rellenado el formulario con los datos de la etiqueta. Revísalos antes de predecir.")
+            for message in notes["errors"]:
+                st.error(message)      # rojo = hay que corregirlo o no se puede predecir
+            for message in notes["warnings"]:
+                st.warning(message)    # amarillo = raro, pero se puede predecir
+            if notes["no_category"]:
+                st.info("No hemos podido saber la categoría del producto: elígela tú.")
+            if notes["no_ingredients"]:
+                st.info("No se ve la lista de ingredientes. Sube una foto de la lista o escríbela abajo. "
+                        "Si el producto no tiene lista, marca la opción \"no tiene lista de ingredientes\".")
 
 
 def render_result(result):
@@ -272,6 +407,7 @@ with st.spinner("Cargando el modelo (solo la primera vez)..."):
 st.session_state.marker_columns = [c for c in bundle["features"] if c.startswith("tiene_")]
 
 render_header()
+render_photo_upload()   # A03: va antes del formulario (importante para el paso 4)
 col_label, col_result = st.columns([1.1, 1], gap="large")
 
 # ----- Columna izquierda: la etiqueta nutricional -----
