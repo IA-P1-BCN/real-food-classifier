@@ -53,19 +53,22 @@ def check_label(v, category=None):
                             f"(saldrían unas {estimated:.0f} kcal). Revisa los valores.")
     return errors, warnings
 
-def check_ranges(v):
+
+def check_ranges(v, names=None):
     """Revisa cada valor por separado: negativo o más de 100 g en 100 g es imposible.
     (La energía va aparte: su límite es 900 kcal y ya lo revisa check_label.)
     Devuelve (valores_limpios, avisos). Los valores imposibles pasan a None, así
-    el campo queda vacío en el formulario y el usuario tiene que escribirlo él."""
+    el campo queda vacío en el formulario y el usuario tiene que escribirlo él.
+    `names`: {columna: nombre legible} para los mensajes. Si falta, se usa la columna."""
+    names = names or {}
     clean, warnings = dict(v), []
     for column, value in v.items():
-        # Solo revisamos los nutrientes por 100 g (terminan en _100g), sin la energía
+        # Solo los nutrientes por 100 g (terminan en _100g), sin la energía
         if not column.endswith("_100g") or column == "energy-kcal_100g" or value is None:
             continue
         if value < 0 or value > 100:
             clean[column] = None   # vacío: mejor pedirlo que meter un dato falso
-            warnings.append(f"{column}: {value} no es posible en 100 g. Escríbelo a mano.")
+            warnings.append(f"{names.get(column, column)}: {value} no es posible en 100 g. Escríbelo a mano.")
     # Energía negativa: tampoco puede ir al formulario (min_value=0)
     energy = v.get("energy-kcal_100g")
     if energy is not None and energy < 0:
