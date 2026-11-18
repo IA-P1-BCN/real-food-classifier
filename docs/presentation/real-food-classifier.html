@@ -95,14 +95,6 @@ tr.win td{background:rgba(198,243,107,.10);color:var(--lime);font-weight:700} tr
 <div class="grid g2">
 <div class="card soft"><p style="margin:0">Se decide sobre todo por <b>los ingredientes y los aditivos</b>, no por los nutrientes.</p></div>
 <div class="card coral"><p style="margin:0">La frontera difícil: <b>3 frente a 4</b>. Un solo ingrediente (una maltodextrina, un colorante) puede cambiar la clase.</p></div></div></div></section>
-<section class="slide "><div class="topbar"><span class="eyebrow">// 01 · El cliente</span><span>Qué hemos hecho y qué viene</span></div><div class="body">
-<h2>Del dato a una <span class="accent">app que aprende</span></h2>
-<div class="flow">
-<div class="step"><div class="k">48.119</div><div class="t">Datos</div><div class="d">Productos de España de Open Food Facts, con su clase NOVA</div></div><div class="arrow">→</div>
-<div class="step"><div class="k">0,961</div><div class="t">Modelo</div><div class="d">XGBoost, elegido entre 6 modelos. F1 macro en test</div></div><div class="arrow">→</div>
-<div class="step"><div class="k">NOVA 1-4</div><div class="t">App</div><div class="d">Etiqueta del producto → clase NOVA y explicación</div></div><div class="arrow">→</div>
-<div class="step hl"><div class="k">↻</div><div class="t">Feedback</div><div class="d">Cada corrección se guarda y sirve para reentrenar</div></div></div>
-<p class="muted c small" style="margin:0">Hoy el reentrenamiento se lanza a mano; lo automatizaremos más adelante.</p></div></section>
 <section class="slide "><div class="topbar"><span class="eyebrow">// 01 · Cómo trabajamos</span><span>Organización</span></div><div class="body">
 <h2>Cómo nos <span class="accent">organizamos</span></h2>
 <div class="grid g3">
@@ -118,18 +110,23 @@ tr.win td{background:rgba(198,243,107,.10);color:var(--lime);font-weight:700} tr
 <div><b>4</b><span><strong>dev</strong>: solo entra lo revisado</span></div></div></div></div></section>
 <section class="slide "><div class="topbar"><span class="eyebrow">// 01 · Cómo trabajamos</span><span>Tecnologías</span></div><div class="body">
 <h2>Tecnologías y <span class="accent">librerías</span></h2>
-<div class="grid g3"><div class="card soft"><h3>Datos</h3><div class="chips"><span><img class="t" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" onerror="this.remove()">Python 3.12</span><span><img class="t" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/pandas/pandas-original.svg" onerror="this.remove()">pandas</span><span><img class="t" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/numpy/numpy-original.svg" onerror="this.remove()">NumPy</span><span><img class="t" src="https://cdn.simpleicons.org/apachearrow" onerror="this.remove()">pyarrow</span></div></div><div class="card soft"><h3>Gráficos</h3><div class="chips"><span><img class="t" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/matplotlib/matplotlib-original.svg" onerror="this.remove()">matplotlib</span><span>seaborn</span></div></div><div class="card soft"><h3>Modelos</h3><div class="chips"><span><img class="t" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/scikitlearn/scikitlearn-original.svg" onerror="this.remove()">scikit-learn</span><span>XGBoost</span><span>LightGBM</span><span><img class="t" src="https://cdn.simpleicons.org/optuna" onerror="this.remove()">Optuna</span></div></div><div class="card soft"><h3>App</h3><div class="chips"><span><img class="t" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/streamlit/streamlit-original.svg" onerror="this.remove()">Streamlit</span><span>Pillow</span></div></div><div class="card soft"><h3>Lectura de etiquetas</h3><div class="chips"><span><img src="https://cdn.simpleicons.org/googlegemini" onerror="this.remove()">Gemini API</span></div></div><div class="card soft"><h3>Entorno y equipo</h3><div class="chips"><span><img class="t" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/docker/docker-original.svg" onerror="this.remove()">Docker</span><span><img class="t" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/jupyter/jupyter-original.svg" onerror="this.remove()">JupyterLab</span><span><img class="t" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg" onerror="this.remove()">GitHub</span></div></div></div>
+<div class="grid g3"><div class="card soft"><h3>Datos</h3><div class="chips"><span><img class="t" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" onerror="this.remove()">Python 3.12</span><span><img class="t" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/pandas/pandas-original.svg" onerror="this.remove()">pandas</span><span><img class="t" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/numpy/numpy-original.svg" onerror="this.remove()">NumPy</span><span><img class="t" src="https://cdn.simpleicons.org/apachearrow" onerror="this.remove()">pyarrow</span></div></div><div class="card soft"><h3>Gráficos</h3><div class="chips"><span><img class="t" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/matplotlib/matplotlib-original.svg" onerror="this.remove()">matplotlib</span><span>seaborn</span></div></div><div class="card soft"><h3>Modelos</h3><div class="chips"><span><img class="t" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/scikitlearn/scikitlearn-original.svg" onerror="this.remove()">scikit-learn</span><span>XGBoost</span><span>LightGBM</span><span><img class="t" src="https://cdn.simpleicons.org/optuna" onerror="this.remove()">Optuna</span></div></div><div class="card soft"><h3>App</h3><div class="chips"><span><img class="t" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/streamlit/streamlit-original.svg" onerror="this.remove()">Streamlit</span><span>Pillow</span></div></div><div class="card soft"><h3>Lectura de etiquetas</h3><div class="chips"><span><img src="https://cdn.simpleicons.org/googlegemini" onerror="this.remove()">Gemini API</span></div></div><div class="card soft"><h3>Entorno y equipo</h3><div class="chips"><span><img class="t" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/docker/docker-original.svg" onerror="this.remove()">Docker: app dockerizada</span><span><img class="t" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/jupyter/jupyter-original.svg" onerror="this.remove()">JupyterLab</span><span><img class="t" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg" onerror="this.remove()">GitHub</span></div></div></div>
 <p class="muted c small" style="margin:0">Datos: Open Food Facts. Versiones fijadas en requirements.txt.</p></div></section>
-<section class="slide "><div class="topbar"><span class="eyebrow">// 01 · Cómo trabajamos</span><span>Docker</span></div><div class="body">
-<h2>Un solo entorno con <span class="accent">Docker</span></h2>
-<div class="grid g2">
-<div class="card soft"><h3>El problema</h3><p class="small" style="margin:0">Cada algoritmo necesita sus propias librerías (XGBoost, LightGBM, Optuna…). Instalarlas a mano en cada ordenador es lento y cada uno acaba con versiones distintas.</p></div>
-<div class="card"><h3>La solución</h3><p class="small" style="margin:0">Una imagen Docker (Python 3.12) con todas las librerías en versión fija. Todo el equipo trabaja con exactamente lo mismo.</p></div></div>
+<section class="slide "><div class="topbar"><span class="eyebrow">// 03 · La app</span><span>Lectura de etiquetas con IA</span></div><div class="body">
+<h2>De la foto a la clase NOVA, <span class="accent">con IA</span></h2>
 <div class="flow">
-<div class="step"><div class="t">Dockerfile</div><div class="d">Instala Python y las librerías</div></div><div class="arrow">→</div>
-<div class="step"><div class="t">Imagen única</div><div class="d">real-food-classifier</div></div><div class="arrow">→</div>
-<div class="step hl"><div class="t">JupyterLab</div><div class="d">Notebooks · puerto 8888</div></div><div class="arrow">+</div>
-<div class="step hl"><div class="t">Streamlit</div><div class="d">La app · puerto 8501</div></div></div></div></section>
+<div class="step"><div class="t">Fotos</div><div class="d">Hasta 4 por producto: delante, detrás, laterales</div></div><div class="arrow">→</div>
+<div class="step hl"><div class="t">Gemini</div><div class="d">Lee la etiqueta y devuelve datos estructurados en unos 5 s</div></div><div class="arrow">→</div>
+<div class="step"><div class="t">Formulario</div><div class="d">Streamlit rellena nutrientes, ingredientes y aditivos</div></div><div class="arrow">→</div>
+<div class="step"><div class="t">Modelo</div><div class="d">Predice la clase NOVA con su probabilidad</div></div></div>
+<div class="grid g3">
+<div class="card soft"><h3>Qué extrae</h3><p class="small muted" style="margin:0">9 nutrientes por 100 g, lista de ingredientes, aditivos (números E) y la categoría, entre las 42 del dataset.</p></div>
+<div class="card soft"><h3>Sin inventar</h3><p class="small muted" style="margin:0">Solo lo que se ve en la foto: si un dato no aparece, queda vacío. Si la foto no es una etiqueta legible, lo avisa.</p></div>
+<div class="card soft"><h3>Ya preparado</h3><p class="small muted" style="margin:0">Convierte kJ a kcal y sodio a sal, y copia la lista de ingredientes en español.</p></div></div></div></section>
+<section class="slide demo"><div class="topbar"><span class="eyebrow">// 03 · Demo</span><span>En directo</span></div><div class="body">
+<div style="flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center"><h1><span class="accent">DEMO</span></h1><p class="muted mono" style="margin-top:24px">Viviana</p></div></div></section>
+<section class="slide "><div class="topbar"><span class="eyebrow">// Índice</span><span>Índice</span></div><div class="body">
+<div style="flex:1;display:flex;align-items:center;justify-content:center"><h1 style="text-align:center">¿Cómo lo hemos<br><span class="accent">conseguido</span>?</h1></div></div></section>
 <section class="slide "><div class="topbar"><span class="eyebrow">// 02 · Dataset</span><span>Open Food Facts</span></div><div class="body">
 <h2>El dataset: <span class="accent">48.119</span> productos de España</h2>
 <div class="grid g2">
@@ -139,23 +136,12 @@ tr.win td{background:rgba(198,243,107,.10);color:var(--lime);font-weight:700} tr
 <div><span>Con grupo NOVA</span><b>54.403</b></div>
 <div style="border-color:var(--lime)"><span><b style="font-family:var(--sans)">Dataset final</b> · solo con tabla nutricional</span><b style="color:var(--lime)">48.119</b></div>
 </div>
-<div class="card soft"><h3>Reparto por categoría NOVA</h3>
-<div class="small mono" style="display:flex;justify-content:space-between"><span>NOVA 4 · ultraprocesado</span><span>26.713 · 55,5 %</span></div><div class="bar"><i style="width:55.5%;background:var(--n4)"></i></div>
-<div class="small mono" style="display:flex;justify-content:space-between;margin-top:10px"><span>NOVA 3 · procesado</span><span>9.831 · 20,4 %</span></div><div class="bar"><i style="width:20.4%;background:var(--n3)"></i></div>
-<div class="small mono" style="display:flex;justify-content:space-between;margin-top:10px"><span>NOVA 1 · sin procesar</span><span>6.190 · 12,9 %</span></div><div class="bar"><i style="width:12.9%;background:var(--n1)"></i></div>
-<div class="small mono" style="display:flex;justify-content:space-between;margin-top:10px"><span>NOVA 2 · ingrediente culinario</span><span>5.385 · 11,2 %</span></div><div class="bar"><i style="width:11.2%;background:var(--n2)"></i></div></div></div></div></section>
-<section class="slide "><div class="topbar"><span class="eyebrow">// 02 · Dataset</span><span>Clases desbalanceadas</span></div><div class="body">
-<h2>Una clase pesa <span class="accent">más de la mitad</span></h2>
-<div class="grid g2">
-<div class="card"><div class="hero">55,5 %</div><h3>de los productos son NOVA 4</h3>
-<p>Un modelo que dijera siempre «ultraprocesado» acertaría más de la mitad sin aprender nada (accuracy 55,5 %).</p>
-<p class="muted small" style="margin:0">Su F1 macro sería solo 0,1785: por eso usamos esta métrica.</p></div>
-<div class="card soft"><h3>Lo que hicimos: pesos balanceados</h3>
-<p class="small">Damos a cada producto un peso inverso al tamaño de su clase (<span class="mono">balanced</span>):</p>
-<table><tr><th>Clase</th><th class="n">NOVA 1</th><th class="n">NOVA 2</th><th class="n">NOVA 3</th><th class="n">NOVA 4</th></tr>
-<tr><td>Peso</td><td class="n">1,94</td><td class="n">2,23</td><td class="n">1,22</td><td class="n">0,45</td></tr></table>
-<p class="small" style="margin:10px 0 0">Equivocarse en NOVA 2 «cuesta» 5 veces más que en NOVA 4.</p></div></div>
-<p class="c" style="margin:0">Para comparar modelos usamos el <b>F1 macro</b> (cada clase pesa igual) y el recall por clase, <b>no la accuracy</b>.</p></div></section>
+<div class="card soft"><h3>Reparto por categoría NOVA y peso asignado</h3>
+<div class="small mono" style="display:flex;justify-content:space-between"><span>NOVA 4 · ultraprocesado</span><span>26.713 · 55,5 % → peso <b style="color:var(--lime)">0,45</b></span></div><div class="bar"><i style="width:55.5%;background:var(--n4)"></i></div>
+<div class="small mono" style="display:flex;justify-content:space-between;margin-top:10px"><span>NOVA 3 · procesado</span><span>9.831 · 20,4 % → peso <b style="color:var(--lime)">1,22</b></span></div><div class="bar"><i style="width:20.4%;background:var(--n3)"></i></div>
+<div class="small mono" style="display:flex;justify-content:space-between;margin-top:10px"><span>NOVA 1 · sin procesar</span><span>6.190 · 12,9 % → peso <b style="color:var(--lime)">1,94</b></span></div><div class="bar"><i style="width:12.9%;background:var(--n1)"></i></div>
+<div class="small mono" style="display:flex;justify-content:space-between;margin-top:10px"><span>NOVA 2 · culinario</span><span>5.385 · 11,2 % → peso <b style="color:var(--lime)">2,23</b></span></div><div class="bar"><i style="width:11.2%;background:var(--n2)"></i></div></div></div>
+<p class="c" style="margin:0">Un modelo que dijera siempre «ultraprocesado» acertaría el 55,5 % sin aprender nada. Por eso damos a cada producto un <b>peso inverso al tamaño de su clase</b> (<span class="mono">balanced</span>) y medimos con el <b>F1 macro</b>.</p></div></section>
 <section class="slide "><div class="topbar"><span class="eyebrow">// 02 · Dataset</span><span>Limitación conocida desde el inicio</span></div><div class="body">
 <h2>Sabíamos que saldrían <span class="accent">resultados muy altos</span></h2>
 <div class="grid g2">
@@ -167,69 +153,36 @@ tr.win td{background:rgba(198,243,107,.10);color:var(--lime);font-weight:700} tr
 <tr><td>Aromas</td><td class="n">0 %</td><td class="n">61,1 %</td></tr>
 <tr><td>Emulsionantes</td><td class="n">0 %</td><td class="n">47,1 %</td></tr>
 <tr><td>Algún marcador de ultraprocesado</td><td class="n">≤ 3,0 %</td><td class="n">92,7 %</td></tr></table></div></div>
-<p class="c" style="margin:0">El modelo aprende en parte <b>la regla de Open Food Facts</b>, no el criterio de una nutricionista. Lo comprobaremos con números.</p></div></section>
-<section class="slide "><div class="topbar"><span class="eyebrow">// 03 · La app</span><span>Lectura de etiquetas con IA</span></div><div class="body">
-<h2>De la foto a la clase NOVA, <span class="accent">con IA</span></h2>
-<div class="flow">
-<div class="step"><div class="t">Fotos</div><div class="d">Hasta 4 por producto: delante, detrás, laterales</div></div><div class="arrow">→</div>
-<div class="step hl"><div class="t">Gemini</div><div class="d">Lee la etiqueta y devuelve datos estructurados en unos 5 s</div></div><div class="arrow">→</div>
-<div class="step"><div class="t">Formulario</div><div class="d">Streamlit rellena nutrientes, ingredientes y aditivos</div></div><div class="arrow">→</div>
-<div class="step"><div class="t">Modelo</div><div class="d">Predice la clase NOVA y la explica</div></div></div>
-<div class="grid g3">
-<div class="card soft"><h3>Qué extrae</h3><p class="small muted" style="margin:0">9 nutrientes por 100 g, lista de ingredientes, aditivos (números E) y la categoría, entre las 42 del dataset.</p></div>
-<div class="card soft"><h3>Sin inventar</h3><p class="small muted" style="margin:0">Solo lo que se ve en la foto: si un dato no aparece, queda vacío. Si la foto no es una etiqueta legible, lo avisa.</p></div>
-<div class="card soft"><h3>Ya preparado</h3><p class="small muted" style="margin:0">Convierte kJ a kcal y sodio a sal, y copia la lista de ingredientes en español.</p></div></div></div></section>
-<section class="slide demo"><div class="topbar"><span class="eyebrow">// 03 · Demo</span><span>En directo</span></div><div class="body">
-<div style="flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center"><h1><span class="accent">DEMO</span></h1><p class="muted mono" style="margin-top:24px">Viviana</p></div></div></section>
+<p class="c" style="margin:0">El modelo aprende en parte <b>la regla de Open Food Facts</b>, no el criterio de una nutricionista. Lo comprobamos con números en la sección de limitaciones.</p></div></section>
 <section class="slide "><div class="topbar"><span class="eyebrow">// 04 · Decisiones del EDA</span><span>Limpieza</span></div><div class="body">
-<h2>Decisiones de <span class="accent">limpieza</span>, con cifras</h2>
-<table>
-<tr><th>Decisión</th><th>Métrica que la justifica</th></tr>
-<tr><td><b>Quitar productos sin NOVA</b></td><td>El 85 % de los productos de España no tiene NOVA; quedan 54.403 (suficiente, no ampliamos a otros países)</td></tr>
-<tr><td><b>Quitar los sin tabla nutricional</b></td><td>−5.099 productos; NOVA 2 pierde 30 % (8.038 → 5.647): aceites, agua o vinagre exentos de tabla</td></tr>
-<tr><td><b>Quitar duplicados</b></td><td>996 copias eliminadas + 70 productos con NOVA contradictorio</td></tr>
-<tr><td><b>No cargar el Nutri-Score</b></td><td>Evita una fuga de la variable objetivo</td></tr>
-<tr><td><b>Eliminar el sodio</b></td><td>Sal = sodio × 2,5 en el 97,4 % de las filas: misma información</td></tr>
-<tr><td><b>Dividir train/test por producto</b></td><td>46.315 grupos; proporciones idénticas en train y test (12,9 / 11,2 / 20,4 / 55,5 %)</td></tr>
-</table></div></section>
-<section class="slide "><div class="topbar"><span class="eyebrow">// 04 · Decisiones del EDA</span><span>Nulos y categoría</span></div><div class="body">
-<h2>Nulos y categoría: <span class="accent">decisiones con datos</span></h2>
-<div class="grid g2">
-<div class="card soft top"><h3>Los nulos no son aleatorios</h3>
-<table><tr><th>% de nulos</th><th class="n">N1</th><th class="n">N2</th><th class="n">N3</th><th class="n">N4</th></tr>
-<tr><td>Fibra</td><td class="n">14</td><td class="n" style="color:var(--coral)">78</td><td class="n">20</td><td class="n">34</td></tr>
-<tr><td>Fruta y verdura</td><td class="n">7</td><td class="n" style="color:var(--coral)">86</td><td class="n">1</td><td class="n">1</td></tr></table>
-<ul class="small" style="font-size:16px;margin-top:12px"><li>Mediana global = dar fibra a los aceites. Usamos mediana + columna «faltaba».</li>
-<li>7.825 productos sin lista de ingredientes (91 % NOVA 2): se conservan; quitarlos dejaba NOVA 2 con ~900.</li></ul></div>
-<div class="card soft top"><h3>Subcategoría: pnns_groups_2</h3>
-<table><tr><th>Subcategoría</th><th class="n">Clase dominante</th></tr>
-<tr><td>Fats</td><td class="n">96 % NOVA 2</td></tr>
-<tr><td>Waters and flavored waters</td><td class="n">97 % NOVA 1</td></tr>
-<tr><td>Processed meat</td><td class="n">81 % NOVA 4</td></tr>
-<tr><td>Dressings and sauces</td><td class="n">53 % NOVA 4</td></tr></table>
-<p class="small muted" style="margin:12px 0 0">Su categoría padre, «Fat and sauces», mezclaba Fats y Dressings.</p></div></div></div></section>
+<h2>Decisiones de <span class="accent">limpieza</span></h2>
+<div class="card soft" style="max-width:900px;align-self:center;padding:28px 36px"><ul style="font-size:22px;line-height:1.35">
+<li><b>Quitar</b> los productos sin NOVA</li>
+<li><b>Quitar</b> los productos sin tabla nutricional</li>
+<li><b>Quitar</b> los duplicados</li>
+<li><b>No cargar</b> el Nutri-Score, para evitar una fuga de la variable objetivo</li>
+<li><b>Eliminar</b> el sodio, porque duplica la información de la sal</li>
+<li><b>Dividir</b> train y test por producto</li></ul></div></div></section>
 <section class="slide "><div class="topbar"><span class="eyebrow">// 04 · Decisiones del EDA</span><span>Feature engineering</span></div><div class="body">
-<h2>Variables nuevas desde ingredientes y aditivos: <span class="accent">por qué</span></h2>
+<h2><span class="accent">Feature engineering</span></h2>
 <div class="grid g2">
-<div class="card soft top"><h3>14 marcadores sí/no (% de productos)</h3>
-<table><tr><th></th><th class="n">N1</th><th class="n">N2</th><th class="n">N3</th><th class="n">N4</th></tr>
-<tr><td>Aromas</td><td class="n">0</td><td class="n">0</td><td class="n">0</td><td class="n">61,1</td></tr>
-<tr><td>Emulsionantes</td><td class="n">0</td><td class="n">0</td><td class="n">0</td><td class="n">47,1</td></tr>
-<tr><td>Jarabes</td><td class="n">0,5</td><td class="n">0,2</td><td class="n">1,2</td><td class="n">34,3</td></tr>
-<tr><td>Sal, azúcar o aceite</td><td class="n">0,2</td><td class="n">9,3</td><td class="n">91,1</td><td class="n">82,6</td></tr></table>
-<p class="small muted" style="margin:10px 0 0">Los de ultraprocesado separan el 4; sal/azúcar/aceite separan el 1 del 3.</p></div>
-<div class="card soft top"><h3>Contadores</h3>
-<table><tr><th></th><th class="n">N1</th><th class="n">N2</th><th class="n">N3</th><th class="n">N4</th></tr>
-<tr><td>n_ingredientes (mediana)</td><td class="n">1</td><td class="n">1</td><td class="n">4</td><td class="n">10</td></tr>
-<tr><td>Productos sin aditivos</td><td class="n">95 %</td><td class="n">99 %</td><td class="n">72 %</td><td class="n">13 %</td></tr></table>
-<p class="small" style="margin:12px 0 0">Correlación de Spearman con NOVA: <b>n_ingredientes 0,75</b> · <b>additives_n 0,72</b> · tiene_aromas 0,61. Grasa y energía ≈ 0,00 (pero identifican la clase 2).</p></div></div></div></section>
-<section class="slide "><div class="topbar"><span class="eyebrow">// 05 · Modelos</span><span>Seis modelos, una misma métrica</span></div><div class="body">
-<h2>Seis modelos, <span class="accent">distinto preprocesado</span></h2>
+<div class="card soft top"><h3>Nulos</h3><ul style="font-size:19px;line-height:1.35">
+<li><b>Decisión:</b> rellenar con la mediana y añadir una columna «faltaba»</li>
+<li><b>Por qué:</b> los nulos no son aleatorios: a los aceites les falta la fibra, y la mediana global les daría fibra</li>
+<li><b>Subcategoría</b> <span class="mono">pnns_groups_2</span> en vez de la categoría padre: más precisa</li></ul></div>
+<div class="card soft top"><h3>Variables nuevas</h3><ul style="font-size:19px;line-height:1.35">
+<li><b>Qué creamos:</b> 14 marcadores sí/no (aromas, emulsionantes…) y contadores (nº de ingredientes, aditivos)</li>
+<li><b>Por qué:</b> las reglas de NOVA se basan en ingredientes y aditivos</li>
+<li>Ejemplo: aromas en el 61 % de los NOVA 4 y en ningún NOVA 1-3</li></ul></div></div></div></section>
+<section class="slide "><div class="topbar"><span class="eyebrow">// 05 · Modelos</span><span>Seis modelos</span></div><div class="body">
+<h2>Entrenamos <span class="accent">seis modelos</span></h2>
 <div class="grid g2">
-<div class="card soft top"><h3>Regresión logística · KNN</h3><p class="small" style="margin:0">Nulos → mediana + indicador · <b>log1p</b> (n_ingredientes: asimetría 5,0 → 0,0) · escalado · categoría con one-hot · sin energía ni saturadas (redundantes, r = 0,93).</p></div>
-<div class="card soft top"><h3>Árbol de decisión · Random Forest</h3><p class="small" style="margin:0">Nulos → mediana + indicador · categoría con one-hot · sin log ni escalado (los árboles no lo necesitan).</p></div>
-<div class="card top"><h3>XGBoost</h3><p class="small" style="margin:0"><b>No rellena los nulos</b>: aprende solo por qué lado mandarlos (que falte la fibra informa: 78 % en NOVA 2). Categoría con <span class="mono">enable_categorical=True</span>.</p></div>
-<div class="card top"><h3>LightGBM</h3><p class="small" style="margin:0">Igual: <b>nulos nativos</b> y categoría automática (tipo <span class="mono">category</span> de pandas), sin one-hot.</p></div></div>
+<div class="card soft top"><h3>Regresión logística</h3></div>
+<div class="card soft top"><h3>KNN</h3></div>
+<div class="card soft top"><h3>Árbol de decisión</h3></div>
+<div class="card soft top"><h3>Random Forest</h3></div>
+<div class="card top"><h3>XGBoost</h3></div>
+<div class="card top"><h3>LightGBM</h3></div></div>
 <p class="c small muted" style="margin:0">Misma métrica para los seis: F1 macro en validación cruzada de 5 folds, agrupada por producto.</p></div></section>
 <section class="slide "><div class="topbar"><span class="eyebrow">// 05 · Modelos</span><span>Comparación</span></div><div class="body">
 <h2>Resultados de los <span class="accent">seis modelos</span></h2>
@@ -268,42 +221,26 @@ tr.win td{background:rgba(198,243,107,.10);color:var(--lime);font-weight:700} tr
 <li>XGBoost <b>sobreajusta menos</b>: gap 0,027 frente a 0,035.</li>
 <li>Mejor en <b>NOVA 3</b>, la clase más difícil: recall 0,956 frente a 0,950.</li></ul></div>
 <div class="card soft"><h3>El riesgo de equivocarse</h3><ul>
-<li>En un contexto médico (alergias, consecuencias graves) elegiríamos un <b>modelo interpretable</b> (árbol, regresión logística) para saber exactamente por qué falla.</li>
+<li>Si un error tuviera consecuencias graves para la salud elegiríamos un <b>modelo interpretable</b> (árbol, regresión logística) para saber exactamente por qué falla.</li>
 <li>Aquí el usuario solo quiere <b>tomar conciencia</b> de lo que come: un error no tiene consecuencias graves, así que priorizamos el rendimiento.</li></ul></div></div></div></section>
 <section class="slide "><div class="topbar"><span class="eyebrow">// 05 · Modelos</span><span>Errores</span></div><div class="body">
 <h2>Dónde falla: la frontera <span class="accent">3 ↔ 4</span></h2>
-<div class="grid g2">
-<div class="card coral"><h3>181 de 361 errores</h3>
-<p class="small">Ultraprocesados (4) clasificados como procesados (3): la mitad de todos los errores. El inverso, 3 → 4, son solo 60.</p>
-<p class="small" style="margin:0">Por categoría (validación): Legumes 12,8 % de error, Bread 9,4 %, Breakfast cereals 8,3 %: pueden ser 3 o 4 según la receta. Sweets, casi siempre 4: 2,1 %.</p></div>
-<div class="card soft"><h3>Por qué: revisamos 8 a mano</h3><ul style="font-size:18px">
-<li>Parecen alimentos «casi normales», con pocos aditivos.</li>
-<li><b>Un solo detalle</b> los hace NOVA 4: maltodextrina, proteína de guisante, lecitina, un colorante, edulcorantes.</li>
-<li>El modelo no conoce todas esas sustancias.</li>
-<li>Algunas etiquetas son discutibles (tortitas, falafels): parte del error es ruido en el dato.</li></ul></div></div></div></section>
-<section class="slide "><div class="topbar"><span class="eyebrow">// 06 · Feedback</span><span>Qué pasa con la corrección</span></div><div class="body">
-<h2>La nutricionista corrige, <span class="accent">el modelo aprende</span></h2>
-<p class="muted c small" style="margin:0">Ejemplo: el modelo dice «ultraprocesado» (4), pero era «procesado» (3). Ella lo marca.</p>
-<div><div class="lane">En la app</div><div class="flow">
-<div class="step"><div class="t">Predicción</div><div class="d">El modelo dice NOVA 4</div></div><div class="arrow">→</div>
-<div class="step"><div class="t">«¿Es correcto?»</div><div class="d">Ella pulsa «no» y elige la clase real: 3</div></div><div class="arrow">→</div>
-<div class="step hl"><div class="t">feedback.csv</div><div class="d">Una fila por corrección: etiqueta, predicción, clase real, fecha</div></div></div></div>
-<div><div class="lane">Script de reentrenamiento · manual, aún no automatizado</div><div class="flow">
-<div class="step"><div class="t">Limpia</div><div class="d">Quita duplicados y correcciones no válidas</div></div><div class="arrow">→</div>
-<div class="step"><div class="t">Reentrena</div><div class="d">Datos originales + correcciones (cada corrección cuenta la mitad)</div></div><div class="arrow">→</div>
-<div class="step"><div class="t">Modelo nuevo</div><div class="d">Se guarda aparte y se compara con el actual (F1 en test)</div></div><div class="arrow">→</div>
-<div class="step hl"><div class="t">Decisión</div><div class="d">A mano: decidimos si la app usa el modelo nuevo</div></div></div></div>
-<p class="muted c tiny" style="margin:0">Hoy el feedback va a un CSV; en el futuro, a una base de datos.</p></div></section>
+<div class="grid g3" style="text-align:center">
+<div class="card soft"><div class="hero" style="color:var(--text)">361</div><h3 style="margin:0">errores en total</h3><p class="muted small" style="margin:6px 0 0">3,8 % de 9.624 productos</p></div>
+<div class="card coral"><div class="hero">181</div><h3 style="margin:0">4 → 3</h3><p class="muted small" style="margin:6px 0 0">3,4 % de los NOVA 4</p></div>
+<div class="card coral"><div class="hero">60</div><h3 style="margin:0">3 → 4</h3><p class="muted small" style="margin:6px 0 0">3,1 % de los NOVA 3</p></div></div>
+<p class="c" style="margin:0;max-width:960px;align-self:center">Son clases muy cercanas: <b>un solo ingrediente</b> puede pasar un producto de 3 a 4, y el modelo no conoce todas esas sustancias.</p></div></section>
 <section class="slide "><div class="topbar"><span class="eyebrow">// 07 · Conclusión</span><span>Limitaciones y soluciones</span></div><div class="body">
 <h2>Limitaciones y <span class="accent">cómo las abordaríamos</span></h2>
-<div class="grid" style="grid-template-columns:1fr 1.8fr;gap:16px"><div class="lane" style="margin:14px 0 0">Limitación</div><div class="lane" style="margin:14px 0 0">Cómo la abordaríamos</div></div>
-<div class="grid" style="grid-template-columns:1fr 1.8fr;gap:16px"><div class="card coral" style="border-width:2px"><h3 style="margin-bottom:4px">La nota alta imita las reglas de OFF</h3><p class="small muted" style="margin:0">Usa las mismas pistas que OFF: ingredientes y aditivos</p></div><div class="card soft"><p class="small" style="margin:0;line-height:1.45"><b>Medir con la nutricionista:</b> que etiquete a mano 200-300 productos y comparar con el modelo. Pedirle feedback sobre todo en los productos dudosos, donde más aprende el modelo.</p></div></div>
-<div class="grid" style="grid-template-columns:1fr 1.8fr;gap:16px"><div class="card coral" style="border-width:2px"><h3 style="margin-bottom:4px">Frontera 3 ↔ 4</h3><p class="small muted" style="margin:0">181 de 361 errores</p></div><div class="card soft"><p class="small" style="margin:0;line-height:1.45">Reconocer más sustancias (maltodextrina, lecitina…) y listas en varios idiomas. <b>Marcar como «dudoso»</b> lo de baja confianza: 0,79 de media cuando falla, 0,98 cuando acierta.</p></div></div>
-<div class="grid" style="grid-template-columns:1fr 1.8fr;gap:16px"><div class="card coral" style="border-width:2px"><h3 style="margin-bottom:4px">Productos sin tabla nutricional</h3><p class="small muted" style="margin:0">5.099 quitados del dataset</p></div><div class="card soft"><p class="small" style="margin:0;line-height:1.45">Avisar en la app de que no se pueden clasificar; a futuro, un modelo que parta solo de los ingredientes.</p></div></div></div></section>
+<div class="grid" style="grid-template-columns:1fr 36px 1.8fr;gap:12px"><div class="lane" style="margin:8px 0 0">Limitación</div><div></div><div class="lane" style="margin:8px 0 0">Cómo la abordaríamos</div></div>
+<div class="grid" style="grid-template-columns:1fr 36px 1.8fr;gap:12px;align-items:center"><div class="card coral" style="border-width:2px"><h3 style="margin-bottom:4px">La nota alta imita las reglas de OFF</h3><p class="small muted" style="margin:0">Usa las mismas pistas que OFF: ingredientes y aditivos</p></div><div style="font-size:30px;color:var(--lime);text-align:center">→</div><div class="card soft"><ul style="font-size:17px;line-height:1.3;margin:0"><li><b>Ya medido:</b> sin las 16 variables de ingredientes, el F1 baja de 0,964 a 0,862</li><li>Que la nutricionista etiquete a mano 200-300 productos y compararlos con el modelo</li><li>Pedirle feedback sobre todo en los dudosos</li></ul></div></div>
+<div class="grid" style="grid-template-columns:1fr 36px 1.8fr;gap:12px;align-items:center"><div class="card coral" style="border-width:2px"><h3 style="margin-bottom:4px">Frontera 3 ↔ 4</h3><p class="small muted" style="margin:0">181 de 361 errores</p></div><div style="font-size:30px;color:var(--lime);text-align:center">→</div><div class="card soft"><ul style="font-size:17px;line-height:1.3;margin:0"><li>Reconocer más sustancias (maltodextrina, lecitina…) y listas en varios idiomas</li><li><b>Marcar como «dudoso»</b> lo de baja confianza: 0,79 de media cuando falla, 0,98 cuando acierta</li></ul></div></div>
+<div class="grid" style="grid-template-columns:1fr 36px 1.8fr;gap:12px;align-items:center"><div class="card coral" style="border-width:2px"><h3 style="margin-bottom:4px">Productos sin tabla nutricional</h3><p class="small muted" style="margin:0">5.099 quitados del dataset</p></div><div style="font-size:30px;color:var(--lime);text-align:center">→</div><div class="card soft"><ul style="font-size:17px;line-height:1.3;margin:0"><li>Avisar en la app de que no se pueden clasificar</li><li>A futuro, un modelo que parta solo de los ingredientes</li></ul></div></div>
+</div></section>
 <section class="slide "><div class="topbar"><span class="eyebrow">// 07 · Conclusión</span><span>Futuras mejoras</span></div><div class="body">
 <h2>Futuras <span class="accent">mejoras</span></h2>
 <div class="grid g2">
-<div class="card"><h3>1 · App para los pacientes</h3><p class="small" style="margin:0">Con una precisión ya alta, ponerla en manos de los pacientes de la nutricionista.</p></div>
+<div class="card"><h3>1 · App para los pacientes</h3><p class="small" style="margin:0">Después de validarlo con la nutricionista, ponerla en manos de sus pacientes.</p></div>
 <div class="card"><h3>2 · Base de datos en vez de CSV</h3><p class="small" style="margin:0">El feedback se guardaría en una base de datos: más robusta, con varios usuarios a la vez y lista para crecer.</p></div>
 <div class="card"><h3>3 · Reentrenamiento automático</h3><p class="small" style="margin:0">Hoy es manual y con todos los datos. <b>Con umbral:</b> se lanza solo al llegar a N correcciones nuevas. Con mucho volumen, <b>muestreo:</b> una muestra del histórico más el feedback nuevo.</p></div>
 <div class="card"><h3>4 · Despliegue en la nube</h3><p class="small" style="margin:0">Hoy todo corre en local con Docker. En la nube, la app y el reentrenamiento estarían disponibles sin depender de nuestro ordenador.</p></div></div></div></section>
