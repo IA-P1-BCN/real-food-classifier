@@ -113,6 +113,47 @@ Regenera `data/interim/` y `data/processed/off_nova_clean.csv.gz` con los pasos 
 1. Abre `notebooks/04_m08_compare_models.ipynb` y ejecútalo de principio a fin. Solo necesita ficheros que sí están en el repo (`data/processed/off_nova_clean.csv.gz` y `results/M05-metrics.json`).
 2. Se crean `models/m08_xgboost.joblib`, `results/M08-metrics.json` y `results/M08-confusion_matrix.png`.
 
+## Reentrenar con feedback
+
+La app pregunta al usuario si el NOVA predicho es correcto y, si no, cuál es el correcto. Cada respuesta se guarda como una fila en `data/feedback/feedback.csv` (el fichero se crea solo la primera vez y no se sube a git; el formato está en `data/feedback/feedback_template.csv`).
+
+```
+app ─► guardar_feedback(fila) ─► data/feedback/feedback.csv
+                                        │
+          (una vez por semana)          ▼
+                              python -m src.retrain
+                                        │
+        dataset limpio + feedback válido ─► XGBoost nuevo + métricas
+```
+
+**Guardar feedback (desde la app):**
+
+```python
+from src.feedback import guardar_feedback
+
+guardar_feedback({
+    "nova_predicho": 4, "es_correcto": "no", "nova_correcto": 3,
+    "product_name": "...", "fat_100g": 10.0,  # + el resto de columnas del modelo
+})
+```
+
+Valida la fila (NOVA entre 1 y 4, `es_correcto` "si"/"no" coherente con los NOVA, al menos un nutriente) y lanza `ValueError` si no sirve. `id_feedback` y `fecha` (UTC, ISO 8601) se rellenan solos. La etiqueta que se usa para entrenar es siempre `nova_correcto`.
+
+**Reentrenar (manual):**
+
+```bash
+docker compose run --rm --no-deps jupyter python -m src.retrain
+```
+
+El script:
+1. Lee el feedback y limpia **en memoria** (el CSV no se modifica): quita duplicados (`id_feedback`, y el mismo producto repetido: se queda el más reciente), filas inválidas y productos que están en el test (fuga de datos).
+2. Entrena desde cero con el dataset limpio + todo el feedback acumulado. Cada fila de feedback pesa 0,5. El test no cambia, así que el F1 «antes» y «después» son comparables.
+3. Guarda `models/m08_xgboost_retrained.joblib` (**no** sustituye al modelo anterior: se decide a mano cuál usa la app) y añade una entrada a `results/F03-metrics.json` con fecha, filas usadas, filas nuevas desde el último reentrenamiento y las métricas por clase.
+
+Con 0 feedback reproduce el F1 macro de M08 (0,9611). Avisa si hay menos de 100 filas válidas.
+
+**Por qué siempre desde cero:** con ~48.000 productos tarda segundos, permite retirar filas malas y evita que el modelo «olvide» el dataset. Si el volumen creciera mucho, el siguiente paso sería reentrenar solo cuando el acierto real baje de un umbral y usar una ventana reciente más una muestra del histórico.
+
 ## Estado
 
 - [x] Fase 1 · EDA y limpieza del dataset
