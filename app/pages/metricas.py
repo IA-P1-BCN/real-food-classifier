@@ -1,6 +1,7 @@
 """F02: métricas en vivo calculadas con el feedback guardado (data/feedback/feedback.csv).
 
-Streamlit detecta app/pages/ solo: aparece como segunda página en el menú lateral.
+Página aparte, sin enlace en la app: el CSS de la app oculta el menú lateral,
+así que se entra por URL: http://localhost:8501/metricas
 """
 import sys
 from datetime import datetime
@@ -46,7 +47,7 @@ def dibujar_matriz(df):
 st.set_page_config(page_title="Métricas en vivo · Real Food Classifier", page_icon="📊",
                    layout="wide")
 st.title("Métricas en vivo")
-st.caption("Calculadas con las respuestas a «¿Ha acertado?» que guarda la app.")
+st.caption("Calculadas con las respuestas a «¿Ha acertado el modelo?» que guarda la app.")
 
 
 # El fragmento se vuelve a ejecutar solo cada REFRESCO sin recargar toda la página:
@@ -54,7 +55,7 @@ st.caption("Calculadas con las respuestas a «¿Ha acertado?» que guarda la app
 @st.fragment(run_every=REFRESCO)
 def metricas_en_vivo():
     if not FEEDBACK_PATH.exists() or FEEDBACK_PATH.stat().st_size == 0:
-        st.info("Todavía no hay feedback. Haz una predicción y responde «¿Ha acertado?».")
+        st.info("Todavía no hay feedback. Haz una predicción y responde «¿Ha acertado el modelo?».")
         return
 
     df = cargar_feedback(FEEDBACK_PATH.stat().st_mtime)
@@ -69,10 +70,14 @@ def metricas_en_vivo():
         return
 
     y_real, y_pred = df["nova_correcto"], df["nova_predicho"]
+    # Solo las clases que aparecen en el feedback: una clase sin respuestas
+    # contaría como F1 = 0 y bajaría el F1 macro sin motivo (pasa con pocas respuestas)
+    clases_presentes = sorted(set(y_real) | set(y_pred))
+
     c1, c2, c3 = st.columns(3)
     c1.metric("Respuestas", len(df))
     c2.metric("Accuracy", f"{accuracy_score(y_real, y_pred):.1%}")
-    c3.metric("F1 macro", f"{f1_score(y_real, y_pred, labels=CLASES, average='macro', zero_division=0):.3f}")
+    c3.metric("F1 macro", f"{f1_score(y_real, y_pred, labels=clases_presentes, average='macro', zero_division=0):.3f}")
 
     if len(df) < 30:
         st.warning("Hay pocas respuestas: las métricas aún no son fiables.")
