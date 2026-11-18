@@ -20,6 +20,7 @@ from src.ingredient_markers import detect_markers, find_additives  # noqa: E402
 from src.label_checks import check_label, check_ranges  # noqa: E402  (mismas reglas que la limpieza de E01)
 from src.label_extraction import (  # noqa: E402  (A02: lectura de la foto)
     MAX_PHOTOS, PNNS_GROUPS_2, LabelExtractionError, extract_label)
+from src.feedback import guardar_feedback  # noqa: E402  (F01: guarda en data/feedback/feedback.csv)
 from src.modeling import CATEGORY  # noqa: E402
 from src.predict import MODEL_PATH, load_bundle, predict_nova  # noqa: E402  (A04)
 
@@ -359,6 +360,56 @@ def render_photo_upload():
                         "Si el producto no tiene lista, marca la opción \"no tiene lista de ingredientes\".")
 
 
+def send_feedback():
+    """Callback del botón "Enviar respuesta" (F01). Monta la fila del CSV y la guarda.
+    Va como callback para que se ejecute ANTES de recargar: así el "¡Gracias!"
+    sale en esta misma pulsación."""
+    result = st.session_state.result
+    nova = result["nova"]
+    ok = st.session_state.get("fb_ok") == "Sí"
+    fila = {
+        **result["row"],                         # las 26 columnas del modelo
+        "origen": result["origin"],
+        "modelo_version": MODEL_PATH.stem,       # "m08_xgboost"
+        "nova_predicho": nova,
+        "confianza": round(result["proba"][nova], 4),
+        "es_correcto": "si" if ok else "no",
+        "nova_correcto": nova if ok else st.session_state.get("fb_real"),
+        "product_name": result["product_name"],
+        "ingredients_text": result["ingredients_text"],
+    }   # id_feedback y fecha los pone guardar_feedback
+    try:
+        guardar_feedback(fila)
+        result["feedback_saved"] = True
+        result["feedback_error"] = None
+    except ValueError as e:                      # la fila no pasa la validación de src/feedback.py
+        result["feedback_error"] = str(e)
+
+
+def render_feedback(result):
+    """F01: después de cada predicción, preguntar si ha acertado y, si no, el NOVA real."""
+    with st.container(key="feedback"):
+        if result.get("feedback_saved"):
+            st.success("¡Gracias! Tu respuesta nos ayuda a mejorar el modelo.")
+            return
+
+        ok = st.radio("¿Ha acertado el modelo?", ["Sí", "No"], index=None,
+                      horizontal=True, key="fb_ok")
+        real = None
+        if ok == "No":
+            # Sin el NOVA predicho: si fuera ese, la respuesta sería "Sí"
+            options = [n for n in NOVA if n != result["nova"]]
+            real = st.selectbox("¿Cuál es el grupo NOVA real?", options, index=None,
+                                format_func=lambda n: f"NOVA {n} · {NOVA[n]['name']}",
+                                placeholder="Elige el grupo correcto", key="fb_real")
+
+        # Desactivado hasta que la respuesta esté completa
+        st.button("Enviar respuesta", key="fb_send", on_click=send_feedback,
+                  disabled=ok is None or (ok == "No" and real is None))
+        if result.get("feedback_error"):
+            st.error(f"No se ha podido guardar: {result['feedback_error']}")
+
+
 def render_result(result):
     """Columna derecha: sello del resultado (o mensaje vacío / errores) + leyenda con probabilidades."""
     html('<div class="rf-result-head"><h2>Resultado</h2></div>')
@@ -389,6 +440,7 @@ def render_result(result):
         for warning in result.get("warnings", []):
             html(f'<div class="rf-empty rf-warning">{warning}</div>')
         render_disclaimer()   # A05: el aviso, pegado a la predicción
+        render_feedback(result)   # F01: ¿ha acertado?
 
     # Leyenda: cada fila lleva de fondo una barra con la probabilidad de su grupo.
     # El color al 15 % de opacidad se consigue añadiendo "26" (hex) al color
@@ -540,8 +592,20 @@ if submitted:
         classes, proba, _ = predict_nova(values, bundle)
         proba_by_class = dict(zip(classes, map(float, proba)))
         nova = max(proba_by_class, key=proba_by_class.get)   # la clase más probable
-        st.session_state.result = {"nova": nova, "proba": proba_by_class, "errors": [],
-                                   "warnings": warnings}
+        extraction = st.session_state.get("extraction")   # solo existe si se ha leído una foto (A03)
+        st.session_state.result = {
+            "nova": nova, "proba": proba_by_class, "errors": [], "warnings": warnings,
+            # F01: lo que necesita el feedback. Va aquí porque al pulsar un botón
+            # Streamlit vuelve a ejecutar todo el script y `values` se pierde
+            "row": dict(values),                      # la fila tal cual la recibe el modelo
+            "origin": "foto" if extraction else "manual",
+            "product_name": extraction.get("product_name") if extraction else None,
+            "ingredients_text": None if no_list else ingredients,
+            "feedback_saved": False,                  # aún no ha contestado
+        }
+        # Nueva predicción: borramos las respuestas que quedaran del producto anterior
+        for key in ("fb_ok", "fb_real"):
+            st.session_state.pop(key, None)
 
 # ----- Columna derecha: resultado -----
 with col_result:
