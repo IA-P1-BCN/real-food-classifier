@@ -27,6 +27,7 @@ Una app de Streamlit pensada para usar con el móvil en el súper:
 2. La app detecta sola los aditivos y los marcadores de ultraprocesado (aromas, edulcorantes, jarabes…) en la lista de ingredientes.
 3. Comprueba que los valores tengan sentido (por ejemplo, que las grasas saturadas no superen las grasas totales).
 4. Predice el grupo NOVA con el modelo XGBoost y muestra la probabilidad de cada grupo.
+5. Muestra un aviso fijo abajo, y otro junto al resultado, de que es una estimación automática y no sustituye el consejo de un nutricionista.
 
 Para arrancarla necesitas el modelo `models/m08_xgboost.joblib` (ver [Regenerar el dataset y el modelo](#regenerar-el-dataset-y-el-modelo)) y Docker:
 

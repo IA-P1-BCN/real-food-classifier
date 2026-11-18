@@ -191,6 +191,19 @@ def label_row(text, unit, sub=False, note=""):
     return c_input
 
 
+# A05: aviso que pidió la profesora. Sale fijo abajo y junto al resultado.
+DISCLAIMER = ("Esta aplicación ofrece una estimación automática y no sustituye el consejo "
+              "de un nutricionista ni de un médico. Ante cualquier duda sobre tu alimentación, "
+              "consulta a un profesional.")
+
+
+def render_disclaimer(fixed=False):
+    """Caja coral con el aviso. fixed=True: barra pegada abajo, visible siempre aunque hagas scroll."""
+    extra = " rf-disclaimer-fixed" if fixed else ""
+    html(f'<div class="rf-disclaimer{extra}" role="note">'
+         f'<strong>Aviso:</strong> {DISCLAIMER}</div>')
+
+
 # ---------------------------------------------------------------- Componentes visuales
 def render_header():
     """Cabecera: etiqueta superior, píldora de estado y título grande."""
@@ -369,6 +382,7 @@ def render_result(result):
         # Avisos: valores raros pero posibles (p. ej. energía que parece estar en kJ)
         for warning in result.get("warnings", []):
             html(f'<div class="rf-empty rf-warning">{warning}</div>')
+        render_disclaimer()   # A05: el aviso, pegado a la predicción
 
     # Leyenda: cada fila lleva de fondo una barra con la probabilidad de su grupo.
     # El color al 15 % de opacidad se consigue añadiendo "26" (hex) al color
@@ -411,6 +425,7 @@ with st.spinner("Cargando el modelo (solo la primera vez)..."):
 st.session_state.marker_columns = [c for c in bundle["features"] if c.startswith("tiene_")]
 
 render_header()
+render_disclaimer(fixed=True)   # A05: barra fija abajo, en todos los estados
 render_photo_upload()   # A03: va antes del formulario (importante para el paso 4)
 col_label, col_result = st.columns([1.1, 1], gap="large")
 
