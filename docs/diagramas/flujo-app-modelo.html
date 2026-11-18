@@ -1,0 +1,78 @@
+<!DOCTYPE html><html lang="es"><head><meta charset="utf-8"><title>Flujo app / modelo</title>
+<style>body{margin:0;background:#0E1311;color:#E8EFEA;font-family:system-ui;padding:24px}h1{font-size:20px}.mermaid{background:#0E1311}</style></head><body>
+<h1>Real Food Classifier : app, modelo y feedback</h1>
+<pre class="mermaid">
+%%{init:{'flowchart':{'nodeSpacing':40,'rankSpacing':45,'padding':18}}}%%
+flowchart TB
+  classDef data fill:#151C19,stroke:#C6F36B,color:#E8EFEA
+  classDef code fill:#1d2622,stroke:#A9B8B0,color:#E8EFEA
+  classDef model fill:#C6F36B,stroke:#C6F36B,color:#0E1311,font-weight:bold
+  classDef todo fill:#2a1a18,stroke:#FF7A6B,color:#E8EFEA,stroke-dasharray:5 4
+  classDef stop fill:#2a1a18,stroke:#FF7A6B,color:#E8EFEA
+
+  subgraph M1["① ENTRENAMIENTO — una sola vez, en los notebooks"]
+    direction LR
+    CSV[("off_nova_clean.csv.gz<br/>48.119 productos + su NOVA")]:::data
+    NB["Notebooks M05 / M08<br/>XGBoost aprende con el train<br/>test: F1 = 0,961"]:::code
+    JOB{{"models/m08_xgboost.joblib<br/>un diccionario (bundle) con:<br/>① el modelo XGBoost<br/>② la lista exacta de variables<br/>③ las categorías pnns_groups_2<br/>④ label_offset (XGBoost cuenta desde 0, NOVA desde 1)"}}:::model
+    CSV --> NB --> JOB
+  end
+
+  subgraph M2["② LA APP — con cada producto, en unos segundos"]
+    direction TB
+    PHOTO["Fotos de la etiqueta<br/>(opcional, hasta 4)"]:::data
+    GEM["Gemini<br/>label_extraction.py<br/>lee la foto → nutrientes,<br/>ingredientes, aditivos, categoría"]:::code
+    FORM["Formulario Streamlit (app.py)<br/>lo rellena Gemini o a mano<br/>se pueden corregir los valores"]:::code
+    CHECK{"Comprobaciones lógicas<br/>label_checks.py"}:::code
+    ERR["Mensaje de error<br/>se detiene"]:::stop
+    subgraph PY["src/predict.py — el puente entre la app y el modelo"]
+      direction TB
+      LOAD["load_bundle()<br/>joblib.load del .joblib<br/>@st.cache_resource: se carga UNA vez<br/>si falta el archivo: error claro, la app no se rompe"]:::code
+      PRE["to_model_input(valores, bundle)<br/>convierte el formulario en UNA fila<br/>mismas columnas y mismo orden que al entrenar<br/>categoría desconocida: lo avisa"]:::code
+      PRED["predict_nova()<br/>predict_proba → una probabilidad por clase<br/>+ label_offset: vuelve a NOVA 1, 2, 3, 4"]:::code
+      LOAD --> PRE --> PRED
+    end
+    OUT["Pantalla: clase más probable<br/>+ Confianza + barras de probabilidad"]:::data
+    END(["FIN de la predicción<br/>la predicción no guarda nada<br/>y el modelo no ha cambiado"]):::stop
+
+    PHOTO --> GEM --> FORM
+    FORM -->|"clic en Predecir"| CHECK
+    CHECK -->|"error"| ERR
+    CHECK -->|"OK"| PRE
+    PRED --> OUT --> END
+  end
+
+  subgraph M3["③ FEEDBACK — F01 (botón) y F03 (reentrenamiento)"]
+    direction TB
+    BTN{"«¿Es correcto?»<br/>(F01)"}:::data
+    SI["SÍ<br/>se guarda la fila tal cual<br/>es_correcto = si<br/>nova_correcto = nova_predicho"]:::data
+    NO["NO<br/>elige la clase real (1-4)<br/>es_correcto = no<br/>nova_correcto = la clase que ella dice"]:::data
+    FB[("data/feedback/feedback.csv<br/>↳ AQUÍ se añade UNA fila por respuesta<br/>(sí y no acaban juntos)")]:::data
+    subgraph RTG["src/retrain.py — se lanza a mano: python -m src.retrain"]
+      direction TB
+      R1["1 · Cargar<br/><b>cargar_datos()</b> · src/retrain.py<br/>el CSV original (train y test del ①)<br/>y los parámetros de XGBoost de M05"]:::code
+      R2["2 · Limpiar el feedback<br/><b>cargar_feedback()</b> · src/retrain.py<br/>(valida con es_valida() · src/feedback.py)<br/>quita filas no válidas<br/>quita duplicados (mismo nombre y nutrientes)"]:::code
+      R3["3 · Quitar la fuga con el test<br/><b>quitar_fuga_test()</b> · src/retrain.py<br/>descarta lo que ya está en el test<br/>para que la comparación sea justa"]:::code
+      R4["4 · Entrenar DOS modelos<br/><b>entrenar()</b> · src/retrain.py<br/>ANTES: solo datos originales<br/>DESPUÉS: originales + feedback (peso 0,5)"]:::code
+      R5{"5 · Comparar en el test<br/><b>evaluar()</b> · src/retrain.py<br/>F1 macro y recall por clase<br/>antes frente a después"}:::code
+      R6["6 · Guardar<br/><b>main()</b> · src/retrain.py<br/>models/m08_xgboost_retrained.joblib (aparte)<br/>+ results/F03-metrics.json (historial)"]:::code
+      R1 --> R2 --> R3 --> R4 --> R5 --> R6
+    end
+    DEC["Decisión a mano: ¿el nuevo es mejor?<br/>si sí, se cambia MODEL_PATH en la app<br/>el modelo actual no se reemplaza solo"]:::todo
+    BTN -->|"sí"| SI --> FB
+    BTN -->|"no"| NO --> FB
+    FB --> R1
+    R6 --> DEC
+  end
+
+  JOB ==>|"el archivo se lee al arrancar la app"| LOAD
+  OUT -. "tras el resultado: el usuario responde" .-> BTN
+  style M1 fill:#0E1311,stroke:#2A3631,color:#C6F36B
+  style M2 fill:#0E1311,stroke:#2A3631,color:#C6F36B
+  style RTG fill:#101714,stroke:#FF7A6B,color:#FF7A6B,stroke-dasharray:5 4
+  style PY fill:#101714,stroke:#C6F36B,color:#C6F36B
+  style M3 fill:#0E1311,stroke:#2A3631,color:#C6F36B
+  linkStyle default stroke:#A9B8B0,stroke-width:2px
+</pre>
+<script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
+mermaid.initialize({startOnLoad:true,theme:"dark",flowchart:{useMaxWidth:true,htmlLabels:true,curve:"basis"}});</script></body></html>
