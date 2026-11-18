@@ -328,7 +328,7 @@ div[data-testid="stColumn"]:has(.rf-result-head) { position: sticky; top: 1.5rem
 .rf-disclaimer {
   border: 2px solid var(--coral);
   border-left-width: 8px;           /* franja gruesa a la izquierda, como un aviso */
-  background: #FF7A6B1A;            /* coral al 10 % de opacidad */
+  background: color-mix(in srgb, var(--coral) 10%, transparent);            /* coral al 10 % de opacidad */
   color: var(--text);
   font-size: 15px;
   line-height: 1.5;
@@ -346,6 +346,8 @@ div[data-testid="stColumn"]:has(.rf-result-head) { position: sticky; top: 1.5rem
   border-width: 2px 0 0;             /* solo una línea coral arriba */
   text-align: center;
 }
+.rf-disclaimer-short { display: none; }
+
 /* Hueco al final de la página para que la barra fija no tape el último contenido */
 [data-testid="stMainBlockContainer"] { padding-bottom: 7rem !important; }
 
@@ -359,5 +361,7 @@ div[data-testid="stColumn"]:has(.rf-result-head) { position: sticky; top: 1.5rem
   .rf-stamp-num { font-size: 72px; }
   .rf-legend-desc { display: none; }
   .rf-disclaimer { font-size: 14px; padding: 10px 12px; }
+  .rf-disclaimer-long { display: none; }
+  .rf-disclaimer-short { display: inline; }
   [data-testid="stMainBlockContainer"] { padding-bottom: 9rem !important; }
 }

@@ -195,13 +195,19 @@ def label_row(text, unit, sub=False, note=""):
 DISCLAIMER = ("Esta aplicación ofrece una estimación automática y no sustituye el consejo "
               "de un nutricionista ni de un médico. Ante cualquier duda sobre tu alimentación, "
               "consulta a un profesional.")
+DISCLAIMER_SHORT = "Estimación automática: no sustituye a un nutricionista ni a un médico."
 
 
 def render_disclaimer(fixed=False):
     """Caja coral con el aviso. fixed=True: barra pegada abajo, visible siempre aunque hagas scroll."""
-    extra = " rf-disclaimer-fixed" if fixed else ""
-    html(f'<div class="rf-disclaimer{extra}" role="note">'
-         f'<strong>Aviso:</strong> {DISCLAIMER}</div>')
+    if fixed:
+        # Las dos versiones van en el HTML y el CSS enseña una u otra según el ancho de pantalla
+        text = (f'<span class="rf-disclaimer-long">{DISCLAIMER}</span>'
+                f'<span class="rf-disclaimer-short">{DISCLAIMER_SHORT}</span>')
+        extra = " rf-disclaimer-fixed"
+    else:
+        text, extra = DISCLAIMER, ""   # caja del resultado: siempre el texto completo
+    html(f'<div class="rf-disclaimer{extra}" role="note"><strong>Aviso:</strong> {text}</div>')
 
 
 # ---------------------------------------------------------------- Componentes visuales
