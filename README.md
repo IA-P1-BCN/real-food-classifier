@@ -23,18 +23,18 @@ NOVA es una clasificación de alimentos creada por investigadores de la Universi
 
 Una app de Streamlit pensada para usar con el móvil en el súper:
 
-1. Eliges la categoría del producto y rellenas la etiqueta nutricional y los ingredientes.
-2. La app detecta sola los aditivos y los marcadores de ultraprocesado (aromas, edulcorantes, jarabes…) en la lista de ingredientes.
-3. Comprueba que los valores tengan sentido (por ejemplo, que las grasas saturadas no superen las grasas totales).
+1. **Lees la etiqueta con fotos** (hasta 4: delante, detrás, laterales). Gemini extrae los nutrientes, los ingredientes, los aditivos y la categoría, y rellena el formulario. También puedes rellenarlo a mano.
+2. La app comprueba que los valores tengan sentido (por ejemplo, que las grasas saturadas no superen las grasas totales) y avisa si la foto no es una etiqueta o si falta la tabla nutricional.
+3. Detecta sola los aditivos y los marcadores de ultraprocesado (aromas, edulcorantes, jarabes…) en la lista de ingredientes.
 4. Predice el grupo NOVA con el modelo XGBoost y muestra la probabilidad de cada grupo.
 
-Para arrancarla necesitas el modelo `models/m08_xgboost.joblib` (ver [Regenerar el dataset y el modelo](#regenerar-el-dataset-y-el-modelo)) y Docker:
+Para arrancarla necesitas el modelo `models/m08_xgboost.joblib` (ver [Regenerar el dataset y el modelo](#regenerar-el-dataset-y-el-modelo)), tu `GEMINI_API_KEY` en `.env` para leer fotos, y Docker:
 
 ```bash
 docker compose up streamlit   # http://127.0.0.1:8501
 ```
 
-**Próximamente:** leer la etiqueta a partir de una foto con Gemini (el código ya está en `src/label_extraction.py`) y preguntar al usuario si la predicción es correcta para reentrenar el modelo.
+**Próximamente:** preguntar al usuario si la predicción es correcta, para reentrenar el modelo con sus correcciones.
 
 ## Resultado: el modelo elegido es XGBoost
 
@@ -230,9 +230,8 @@ Con 0 feedback reproduce el F1 macro de M08 (0,9611). Avisa si hay menos de 100 
 - [x] **Fase 2 · Modelos** y comparación (modelo elegido: XGBoost)
 - [ ] **Fase 3 · App y feedback** · en curso
     - [x] Formulario de la etiqueta y predicción con el modelo final (A01, A04)
-    - [x] Extracción de la etiqueta desde fotos con Gemini (`src/label_extraction.py`)
+    - [x] Leer la etiqueta desde fotos con Gemini, dentro de la app (A02, A03)
     - [x] Pipeline de reentrenamiento con feedback (F03)
-    - [ ] Foto con Gemini dentro de la app
     - [ ] Guardar el feedback del usuario desde la app (F01)
     - [ ] Métricas en vivo a partir del feedback (F02)
 - [ ] **Fase 4 · Informe y demo**
