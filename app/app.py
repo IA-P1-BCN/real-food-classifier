@@ -324,11 +324,15 @@ def render_photo_upload():
 
         notes = st.session_state.get("extraction_notes")
         if notes:
-            st.success("Hemos rellenado el formulario con los datos de la etiqueta. Revísalos antes de predecir.")
-            for message in notes["errors"]:
-                st.error(message)      # rojo = hay que corregirlo o no se puede predecir
-            for message in notes["warnings"]:
-                st.warning(message)    # amarillo = raro, pero se puede predecir
+            if notes["errors"]:
+                # Hay valores imposibles: no decimos "todo bien", avisamos de que hay que corregir
+                st.error("Hemos rellenado el formulario, pero hay valores imposibles. Corrígelos antes de predecir:")
+            else:
+                st.success("Hemos rellenado el formulario con los datos de la etiqueta. Revísalos antes de predecir.")            
+                for message in notes["errors"]:
+                    st.error(message)      # rojo = hay que corregirlo o no se puede predecir
+                for message in notes["warnings"]:
+                    st.warning(message)    # amarillo = raro, pero se puede predecir
             if notes["no_category"]:
                 st.info("No hemos podido saber la categoría del producto: elígela tú.")
             if notes["no_ingredients"]:
