@@ -181,6 +181,8 @@ Regenera `data/interim/` y `data/processed/off_nova_clean.csv.gz` con los pasos 
 
 La idea es que la app pregunte al usuario si el NOVA predicho es correcto y, si no, cuál es el correcto (**todavía no está conectado a la app**: ver [Estado](#estado)). Cada respuesta se guarda como una fila en `data/feedback/feedback.csv`. El fichero se crea solo la primera vez y no se sube a git. El formato está en `data/feedback/feedback_template.csv`.
 
+Métricas en vivo (F02): http://localhost:8501/metricas. Muestran el accuracy, el F1 macro y la matriz de confusión calculados con `data/feedback/feedback.csv`, y se actualizan cada 5 s.
+
 ```
 app ─► guardar_feedback(fila) ─► data/feedback/feedback.csv
                                         │
