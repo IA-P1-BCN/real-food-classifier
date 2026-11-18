@@ -7,7 +7,7 @@ from sklearn.metrics import f1_score, recall_score
 from sklearn.utils.class_weight import compute_sample_weight
 from xgboost import XGBClassifier
 
-from src.feedback import COLUMNS, FEEDBACK_PATH, NUTRIENTES, es_valida
+from src.feedback import COLUMNS, FEATURES, FEEDBACK_PATH, NUTRIENTES, es_valida
 from src.modeling import CATEGORY, DATA_PATH, LABELS, MODELS_DIR, RESULTS_DIR, TARGET
 
 PESO_FEEDBACK = 0.5
@@ -58,9 +58,11 @@ def cargar_feedback(path=FEEDBACK_PATH):
         return pd.DataFrame(columns=COLUMNS + [TARGET, "peso"]), {"total": 0, "usadas": 0}
     total = len(df)
     df = df[df.apply(lambda fila: es_valida(fila.to_dict()), axis=1)]
-    clave = df["product_name"].astype("string").str.strip().str.lower().fillna(df["id_feedback"])
-    df = df.assign(clave=clave).sort_values("fecha").drop_duplicates("clave", keep="last")
-    df = df.drop(columns="clave")
+    # same key as the test-leak check (name + rounded nutrients); no name -> unique id
+    df = df.sort_values("fecha")
+    claves = _claves_producto(df)
+    claves["product_name"] = claves["product_name"].fillna(df["id_feedback"])
+    df = df[~claves.duplicated(keep="last")].copy()
     df[TARGET] = df["nova_correcto"].astype(int)
     df["peso"] = PESO_FEEDBACK
     return df.reset_index(drop=True), {"total": total, "usadas": len(df)}
@@ -82,6 +84,8 @@ def quitar_fuga_test(feedback, test):
 
 def main(feedback_path=FEEDBACK_PATH):
     train, test, features, params = cargar_datos()
+    faltan = set(features) - set(FEATURES)
+    assert not faltan, f"Model features missing from the feedback format: {sorted(faltan)}"
     feedback, resumen = cargar_feedback(feedback_path)
     feedback, fuga = quitar_fuga_test(feedback, test)
     if len(feedback) < MIN_FILAS_AVISO:
