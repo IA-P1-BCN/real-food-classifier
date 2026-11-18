@@ -95,14 +95,27 @@ tr.win td{background:rgba(198,243,107,.10);color:var(--lime);font-weight:700} tr
 <div class="grid g2">
 <div class="card soft"><p style="margin:0">Se decide sobre todo por <b>los ingredientes y los aditivos</b>, no por los nutrientes.</p></div>
 <div class="card coral"><p style="margin:0">La frontera difícil: <b>3 frente a 4</b>. Un solo ingrediente (una maltodextrina, un colorante) puede cambiar la clase.</p></div></div></div></section>
-<section class="slide "><div class="topbar"><span class="eyebrow">// 01 · El cliente</span><span>Qué hemos hecho y qué viene</span></div><div class="body">
-<h2>Del dato a una <span class="accent">app que aprende</span></h2>
+<section class="slide demo"><div class="topbar"><span class="eyebrow">// 03 · Demo</span><span>En directo</span></div><div class="body">
+<div style="flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center"><h1><span class="accent">DEMO</span></h1><p class="muted mono" style="margin-top:24px">Viviana</p></div></div></section>
+<section class="slide "><div class="topbar"><span class="eyebrow">// 02 · Índice</span><span>Índice</span></div><div class="body">
+<h2>¿Cómo lo hemos <span class="accent">conseguido</span>?</h2>
 <div class="flow">
 <div class="step"><div class="k">48.119</div><div class="t">Datos</div><div class="d">Productos de España de Open Food Facts, con su clase NOVA</div></div><div class="arrow">→</div>
 <div class="step"><div class="k">0,961</div><div class="t">Modelo</div><div class="d">XGBoost, elegido entre 6 modelos. F1 macro en test</div></div><div class="arrow">→</div>
-<div class="step"><div class="k">NOVA 1-4</div><div class="t">App</div><div class="d">Etiqueta del producto → clase NOVA y explicación</div></div><div class="arrow">→</div>
-<div class="step hl"><div class="k">↻</div><div class="t">Feedback</div><div class="d">Cada corrección se guarda y sirve para reentrenar</div></div></div>
+<div class="step"><div class="k">NOVA 1-4</div><div class="t">App</div><div class="d">Etiqueta del producto → clase NOVA con su probabilidad</div></div><div class="arrow">→</div>
+<div class="step hl"><div class="k">↻</div><div class="t">Feedback</div><div class="d">Cada corrección se guardará y servirá para reentrenar</div></div></div>
 <p class="muted c small" style="margin:0">Hoy el reentrenamiento se lanza a mano; lo automatizaremos más adelante.</p></div></section>
+<section class="slide "><div class="topbar"><span class="eyebrow">// 03 · La app</span><span>Lectura de etiquetas con IA</span></div><div class="body">
+<h2>De la foto a la clase NOVA, <span class="accent">con IA</span></h2>
+<div class="flow">
+<div class="step"><div class="t">Fotos</div><div class="d">Hasta 4 por producto: delante, detrás, laterales</div></div><div class="arrow">→</div>
+<div class="step hl"><div class="t">Gemini</div><div class="d">Lee la etiqueta y devuelve datos estructurados en unos 5 s</div></div><div class="arrow">→</div>
+<div class="step"><div class="t">Formulario</div><div class="d">Streamlit rellena nutrientes, ingredientes y aditivos</div></div><div class="arrow">→</div>
+<div class="step"><div class="t">Modelo</div><div class="d">Predice la clase NOVA con su probabilidad</div></div></div>
+<div class="grid g3">
+<div class="card soft"><h3>Qué extrae</h3><p class="small muted" style="margin:0">9 nutrientes por 100 g, lista de ingredientes, aditivos (números E) y la categoría, entre las 42 del dataset.</p></div>
+<div class="card soft"><h3>Sin inventar</h3><p class="small muted" style="margin:0">Solo lo que se ve en la foto: si un dato no aparece, queda vacío. Si la foto no es una etiqueta legible, lo avisa.</p></div>
+<div class="card soft"><h3>Ya preparado</h3><p class="small muted" style="margin:0">Convierte kJ a kcal y sodio a sal, y copia la lista de ingredientes en español.</p></div></div></div></section>
 <section class="slide "><div class="topbar"><span class="eyebrow">// 01 · Cómo trabajamos</span><span>Organización</span></div><div class="body">
 <h2>Cómo nos <span class="accent">organizamos</span></h2>
 <div class="grid g3">
@@ -167,62 +180,14 @@ tr.win td{background:rgba(198,243,107,.10);color:var(--lime);font-weight:700} tr
 <tr><td>Aromas</td><td class="n">0 %</td><td class="n">61,1 %</td></tr>
 <tr><td>Emulsionantes</td><td class="n">0 %</td><td class="n">47,1 %</td></tr>
 <tr><td>Algún marcador de ultraprocesado</td><td class="n">≤ 3,0 %</td><td class="n">92,7 %</td></tr></table></div></div>
-<p class="c" style="margin:0">El modelo aprende en parte <b>la regla de Open Food Facts</b>, no el criterio de una nutricionista. Lo comprobaremos con números.</p></div></section>
-<section class="slide "><div class="topbar"><span class="eyebrow">// 03 · La app</span><span>Lectura de etiquetas con IA</span></div><div class="body">
-<h2>De la foto a la clase NOVA, <span class="accent">con IA</span></h2>
-<div class="flow">
-<div class="step"><div class="t">Fotos</div><div class="d">Hasta 4 por producto: delante, detrás, laterales</div></div><div class="arrow">→</div>
-<div class="step hl"><div class="t">Gemini</div><div class="d">Lee la etiqueta y devuelve datos estructurados en unos 5 s</div></div><div class="arrow">→</div>
-<div class="step"><div class="t">Formulario</div><div class="d">Streamlit rellena nutrientes, ingredientes y aditivos</div></div><div class="arrow">→</div>
-<div class="step"><div class="t">Modelo</div><div class="d">Predice la clase NOVA y la explica</div></div></div>
+<p class="c" style="margin:0">El modelo aprende en parte <b>la regla de Open Food Facts</b>, no el criterio de una nutricionista. Lo comprobamos con números en la sección de limitaciones.</p></div></section>
+<section class="slide"><div class="topbar"><span class="eyebrow">// 04 · Decisiones del EDA</span><span>Resumen</span></div><div class="body">
+<h2>Decisiones del EDA, <span class="accent">con cifras</span></h2>
 <div class="grid g3">
-<div class="card soft"><h3>Qué extrae</h3><p class="small muted" style="margin:0">9 nutrientes por 100 g, lista de ingredientes, aditivos (números E) y la categoría, entre las 42 del dataset.</p></div>
-<div class="card soft"><h3>Sin inventar</h3><p class="small muted" style="margin:0">Solo lo que se ve en la foto: si un dato no aparece, queda vacío. Si la foto no es una etiqueta legible, lo avisa.</p></div>
-<div class="card soft"><h3>Ya preparado</h3><p class="small muted" style="margin:0">Convierte kJ a kcal y sodio a sal, y copia la lista de ingredientes en español.</p></div></div></div></section>
-<section class="slide demo"><div class="topbar"><span class="eyebrow">// 03 · Demo</span><span>En directo</span></div><div class="body">
-<div style="flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center"><h1><span class="accent">DEMO</span></h1><p class="muted mono" style="margin-top:24px">Viviana</p></div></div></section>
-<section class="slide "><div class="topbar"><span class="eyebrow">// 04 · Decisiones del EDA</span><span>Limpieza</span></div><div class="body">
-<h2>Decisiones de <span class="accent">limpieza</span>, con cifras</h2>
-<table>
-<tr><th>Decisión</th><th>Métrica que la justifica</th></tr>
-<tr><td><b>Quitar productos sin NOVA</b></td><td>El 85 % de los productos de España no tiene NOVA; quedan 54.403 (suficiente, no ampliamos a otros países)</td></tr>
-<tr><td><b>Quitar los sin tabla nutricional</b></td><td>−5.099 productos; NOVA 2 pierde 30 % (8.038 → 5.647): aceites, agua o vinagre exentos de tabla</td></tr>
-<tr><td><b>Quitar duplicados</b></td><td>996 copias eliminadas + 70 productos con NOVA contradictorio</td></tr>
-<tr><td><b>No cargar el Nutri-Score</b></td><td>Evita una fuga de la variable objetivo</td></tr>
-<tr><td><b>Eliminar el sodio</b></td><td>Sal = sodio × 2,5 en el 97,4 % de las filas: misma información</td></tr>
-<tr><td><b>Dividir train/test por producto</b></td><td>46.315 grupos; proporciones idénticas en train y test (12,9 / 11,2 / 20,4 / 55,5 %)</td></tr>
-</table></div></section>
-<section class="slide "><div class="topbar"><span class="eyebrow">// 04 · Decisiones del EDA</span><span>Nulos y categoría</span></div><div class="body">
-<h2>Nulos y categoría: <span class="accent">decisiones con datos</span></h2>
-<div class="grid g2">
-<div class="card soft top"><h3>Los nulos no son aleatorios</h3>
-<table><tr><th>% de nulos</th><th class="n">N1</th><th class="n">N2</th><th class="n">N3</th><th class="n">N4</th></tr>
-<tr><td>Fibra</td><td class="n">14</td><td class="n" style="color:var(--coral)">78</td><td class="n">20</td><td class="n">34</td></tr>
-<tr><td>Fruta y verdura</td><td class="n">7</td><td class="n" style="color:var(--coral)">86</td><td class="n">1</td><td class="n">1</td></tr></table>
-<ul class="small" style="font-size:16px;margin-top:12px"><li>Mediana global = dar fibra a los aceites. Usamos mediana + columna «faltaba».</li>
-<li>7.825 productos sin lista de ingredientes (91 % NOVA 2): se conservan; quitarlos dejaba NOVA 2 con ~900.</li></ul></div>
-<div class="card soft top"><h3>Subcategoría: pnns_groups_2</h3>
-<table><tr><th>Subcategoría</th><th class="n">Clase dominante</th></tr>
-<tr><td>Fats</td><td class="n">96 % NOVA 2</td></tr>
-<tr><td>Waters and flavored waters</td><td class="n">97 % NOVA 1</td></tr>
-<tr><td>Processed meat</td><td class="n">81 % NOVA 4</td></tr>
-<tr><td>Dressings and sauces</td><td class="n">53 % NOVA 4</td></tr></table>
-<p class="small muted" style="margin:12px 0 0">Su categoría padre, «Fat and sauces», mezclaba Fats y Dressings.</p></div></div></div></section>
-<section class="slide "><div class="topbar"><span class="eyebrow">// 04 · Decisiones del EDA</span><span>Feature engineering</span></div><div class="body">
-<h2>Variables nuevas desde ingredientes y aditivos: <span class="accent">por qué</span></h2>
-<div class="grid g2">
-<div class="card soft top"><h3>14 marcadores sí/no (% de productos)</h3>
-<table><tr><th></th><th class="n">N1</th><th class="n">N2</th><th class="n">N3</th><th class="n">N4</th></tr>
-<tr><td>Aromas</td><td class="n">0</td><td class="n">0</td><td class="n">0</td><td class="n">61,1</td></tr>
-<tr><td>Emulsionantes</td><td class="n">0</td><td class="n">0</td><td class="n">0</td><td class="n">47,1</td></tr>
-<tr><td>Jarabes</td><td class="n">0,5</td><td class="n">0,2</td><td class="n">1,2</td><td class="n">34,3</td></tr>
-<tr><td>Sal, azúcar o aceite</td><td class="n">0,2</td><td class="n">9,3</td><td class="n">91,1</td><td class="n">82,6</td></tr></table>
-<p class="small muted" style="margin:10px 0 0">Los de ultraprocesado separan el 4; sal/azúcar/aceite separan el 1 del 3.</p></div>
-<div class="card soft top"><h3>Contadores</h3>
-<table><tr><th></th><th class="n">N1</th><th class="n">N2</th><th class="n">N3</th><th class="n">N4</th></tr>
-<tr><td>n_ingredientes (mediana)</td><td class="n">1</td><td class="n">1</td><td class="n">4</td><td class="n">10</td></tr>
-<tr><td>Productos sin aditivos</td><td class="n">95 %</td><td class="n">99 %</td><td class="n">72 %</td><td class="n">13 %</td></tr></table>
-<p class="small" style="margin:12px 0 0">Correlación de Spearman con NOVA: <b>n_ingredientes 0,75</b> · <b>additives_n 0,72</b> · tiene_aromas 0,61. Grasa y energía ≈ 0,00 (pero identifican la clase 2).</p></div></div></div></section>
+<div class="card soft top"><h3>Limpieza</h3><ul class="small"><li>El 85 % de los productos de España no tiene NOVA: quedan 54.403.</li><li>−5.099 sin tabla nutricional.</li><li>996 duplicados y 70 con NOVA contradictorio.</li><li>Train/test por producto: 46.315 grupos.</li></ul></div>
+<div class="card soft top"><h3>Nulos</h3><ul class="small"><li>No son aleatorios: la fibra falta en el 78 % de NOVA 2.</li><li>Mediana + columna «faltaba».</li><li>7.825 sin ingredientes (91 % NOVA 2): se conservan.</li><li>pnns_groups_2 separa mejor que su categoría padre.</li></ul></div>
+<div class="card soft top"><h3>Variables nuevas</h3><ul class="small"><li>14 marcadores sí/no desde ingredientes y aditivos.</li><li>Aromas: 0 % en NOVA 1-3, 61,1 % en NOVA 4.</li><li>Spearman con NOVA: n_ingredientes 0,75, additives_n 0,72.</li></ul></div></div>
+<p class="muted c small" style="margin:0">Las tablas completas están en el anexo, al final.</p></div></section>
 <section class="slide "><div class="topbar"><span class="eyebrow">// 05 · Modelos</span><span>Seis modelos, una misma métrica</span></div><div class="body">
 <h2>Seis modelos, <span class="accent">distinto preprocesado</span></h2>
 <div class="grid g2">
@@ -268,7 +233,7 @@ tr.win td{background:rgba(198,243,107,.10);color:var(--lime);font-weight:700} tr
 <li>XGBoost <b>sobreajusta menos</b>: gap 0,027 frente a 0,035.</li>
 <li>Mejor en <b>NOVA 3</b>, la clase más difícil: recall 0,956 frente a 0,950.</li></ul></div>
 <div class="card soft"><h3>El riesgo de equivocarse</h3><ul>
-<li>En un contexto médico (alergias, consecuencias graves) elegiríamos un <b>modelo interpretable</b> (árbol, regresión logística) para saber exactamente por qué falla.</li>
+<li>Si un error tuviera consecuencias graves para la salud elegiríamos un <b>modelo interpretable</b> (árbol, regresión logística) para saber exactamente por qué falla.</li>
 <li>Aquí el usuario solo quiere <b>tomar conciencia</b> de lo que come: un error no tiene consecuencias graves, así que priorizamos el rendimiento.</li></ul></div></div></div></section>
 <section class="slide "><div class="topbar"><span class="eyebrow">// 05 · Modelos</span><span>Errores</span></div><div class="body">
 <h2>Dónde falla: la frontera <span class="accent">3 ↔ 4</span></h2>
@@ -286,7 +251,7 @@ tr.win td{background:rgba(198,243,107,.10);color:var(--lime);font-weight:700} tr
 <p class="muted c small" style="margin:0">Ejemplo: el modelo dice «ultraprocesado» (4), pero era «procesado» (3). Ella lo marca.</p>
 <div><div class="lane">En la app</div><div class="flow">
 <div class="step"><div class="t">Predicción</div><div class="d">El modelo dice NOVA 4</div></div><div class="arrow">→</div>
-<div class="step"><div class="t">«¿Es correcto?»</div><div class="d">Ella pulsa «no» y elige la clase real: 3</div></div><div class="arrow">→</div>
+<div class="step"><div class="t">«¿Es correcto?»</div><div class="d">Ella pulsa «no» y elige la clase real: 3 <b style="color:var(--coral)">(próximamente en la app)</b></div></div><div class="arrow">→</div>
 <div class="step hl"><div class="t">feedback.csv</div><div class="d">Una fila por corrección: etiqueta, predicción, clase real, fecha</div></div></div></div>
 <div><div class="lane">Script de reentrenamiento · manual, aún no automatizado</div><div class="flow">
 <div class="step"><div class="t">Limpia</div><div class="d">Quita duplicados y correcciones no válidas</div></div><div class="arrow">→</div>
@@ -297,19 +262,61 @@ tr.win td{background:rgba(198,243,107,.10);color:var(--lime);font-weight:700} tr
 <section class="slide "><div class="topbar"><span class="eyebrow">// 07 · Conclusión</span><span>Limitaciones y soluciones</span></div><div class="body">
 <h2>Limitaciones y <span class="accent">cómo las abordaríamos</span></h2>
 <div class="grid" style="grid-template-columns:1fr 1.8fr;gap:16px"><div class="lane" style="margin:14px 0 0">Limitación</div><div class="lane" style="margin:14px 0 0">Cómo la abordaríamos</div></div>
-<div class="grid" style="grid-template-columns:1fr 1.8fr;gap:16px"><div class="card coral" style="border-width:2px"><h3 style="margin-bottom:4px">La nota alta imita las reglas de OFF</h3><p class="small muted" style="margin:0">Usa las mismas pistas que OFF: ingredientes y aditivos</p></div><div class="card soft"><p class="small" style="margin:0;line-height:1.45"><b>Medir con la nutricionista:</b> que etiquete a mano 200-300 productos y comparar con el modelo. Pedirle feedback sobre todo en los productos dudosos, donde más aprende el modelo.</p></div></div>
+<div class="grid" style="grid-template-columns:1fr 1.8fr;gap:16px"><div class="card coral" style="border-width:2px"><h3 style="margin-bottom:4px">La nota alta imita las reglas de OFF</h3><p class="small muted" style="margin:0">Usa las mismas pistas que OFF: ingredientes y aditivos</p></div><div class="card soft"><p class="small" style="margin:0;line-height:1.45"><b>Ya medido:</b> sin las 16 variables de ingredientes el F1 de validación baja de 0,964 a 0,862: el modelo no solo copia la regla de OFF. <b>Medir con la nutricionista:</b> que etiquete a mano 200-300 productos y comparar con el modelo. Pedirle feedback sobre todo en los dudosos.</p></div></div>
 <div class="grid" style="grid-template-columns:1fr 1.8fr;gap:16px"><div class="card coral" style="border-width:2px"><h3 style="margin-bottom:4px">Frontera 3 ↔ 4</h3><p class="small muted" style="margin:0">181 de 361 errores</p></div><div class="card soft"><p class="small" style="margin:0;line-height:1.45">Reconocer más sustancias (maltodextrina, lecitina…) y listas en varios idiomas. <b>Marcar como «dudoso»</b> lo de baja confianza: 0,79 de media cuando falla, 0,98 cuando acierta.</p></div></div>
 <div class="grid" style="grid-template-columns:1fr 1.8fr;gap:16px"><div class="card coral" style="border-width:2px"><h3 style="margin-bottom:4px">Productos sin tabla nutricional</h3><p class="small muted" style="margin:0">5.099 quitados del dataset</p></div><div class="card soft"><p class="small" style="margin:0;line-height:1.45">Avisar en la app de que no se pueden clasificar; a futuro, un modelo que parta solo de los ingredientes.</p></div></div></div></section>
 <section class="slide "><div class="topbar"><span class="eyebrow">// 07 · Conclusión</span><span>Futuras mejoras</span></div><div class="body">
 <h2>Futuras <span class="accent">mejoras</span></h2>
 <div class="grid g2">
-<div class="card"><h3>1 · App para los pacientes</h3><p class="small" style="margin:0">Con una precisión ya alta, ponerla en manos de los pacientes de la nutricionista.</p></div>
+<div class="card"><h3>1 · App para los pacientes</h3><p class="small" style="margin:0">Después de validarlo con la nutricionista, ponerla en manos de sus pacientes.</p></div>
 <div class="card"><h3>2 · Base de datos en vez de CSV</h3><p class="small" style="margin:0">El feedback se guardaría en una base de datos: más robusta, con varios usuarios a la vez y lista para crecer.</p></div>
 <div class="card"><h3>3 · Reentrenamiento automático</h3><p class="small" style="margin:0">Hoy es manual y con todos los datos. <b>Con umbral:</b> se lanza solo al llegar a N correcciones nuevas. Con mucho volumen, <b>muestreo:</b> una muestra del histórico más el feedback nuevo.</p></div>
 <div class="card"><h3>4 · Despliegue en la nube</h3><p class="small" style="margin:0">Hoy todo corre en local con Docker. En la nube, la app y el reentrenamiento estarían disponibles sin depender de nuestro ordenador.</p></div></div></div></section>
 <section class="slide "><div class="topbar"><span class="eyebrow">// Fin</span><span>Real Food Classifier</span></div><div class="body">
 <div style="flex:1;display:flex;flex-direction:column;justify-content:center"><h1>Gracias<span class="accent">.</span></h1>
 <div class="rule thick" style="margin:32px 0 20px;max-width:560px"></div><p class="muted">¿Preguntas?</p></div><div class="grid g3 mono small"><div><span class="muted">PRODUCT OWNER</span><br><b>Damaris Castro</b></div><div><span class="muted">SCRUM MASTER</span><br><b>Charlotte Doulcet</b></div><div><span class="muted">DESARROLLADORA</span><br><b>Viviana Andrango</b></div></div></div></section>
+<section class="slide "><div class="topbar"><span class="eyebrow">// Anexo · EDA</span><span>Limpieza</span></div><div class="body">
+<h2>Decisiones de <span class="accent">limpieza</span>, con cifras</h2>
+<table>
+<tr><th>Decisión</th><th>Métrica que la justifica</th></tr>
+<tr><td><b>Quitar productos sin NOVA</b></td><td>El 85 % de los productos de España no tiene NOVA; quedan 54.403 (suficiente, no ampliamos a otros países)</td></tr>
+<tr><td><b>Quitar los sin tabla nutricional</b></td><td>−5.099 productos; NOVA 2 pierde 30 % (8.038 → 5.647): aceites, agua o vinagre exentos de tabla</td></tr>
+<tr><td><b>Quitar duplicados</b></td><td>996 copias eliminadas + 70 productos con NOVA contradictorio</td></tr>
+<tr><td><b>No cargar el Nutri-Score</b></td><td>Evita una fuga de la variable objetivo</td></tr>
+<tr><td><b>Eliminar el sodio</b></td><td>Sal = sodio × 2,5 en el 97,4 % de las filas: misma información</td></tr>
+<tr><td><b>Dividir train/test por producto</b></td><td>46.315 grupos; proporciones idénticas en train y test (12,9 / 11,2 / 20,4 / 55,5 %)</td></tr>
+</table></div></section>
+<section class="slide "><div class="topbar"><span class="eyebrow">// Anexo · EDA</span><span>Nulos y categoría</span></div><div class="body">
+<h2>Nulos y categoría: <span class="accent">decisiones con datos</span></h2>
+<div class="grid g2">
+<div class="card soft top"><h3>Los nulos no son aleatorios</h3>
+<table><tr><th>% de nulos</th><th class="n">N1</th><th class="n">N2</th><th class="n">N3</th><th class="n">N4</th></tr>
+<tr><td>Fibra</td><td class="n">14</td><td class="n" style="color:var(--coral)">78</td><td class="n">20</td><td class="n">34</td></tr>
+<tr><td>Fruta y verdura</td><td class="n">7</td><td class="n" style="color:var(--coral)">86</td><td class="n">1</td><td class="n">1</td></tr></table>
+<ul class="small" style="font-size:16px;margin-top:12px"><li>Mediana global = dar fibra a los aceites. Usamos mediana + columna «faltaba».</li>
+<li>7.825 productos sin lista de ingredientes (91 % NOVA 2): se conservan; quitarlos dejaba NOVA 2 con ~900.</li></ul></div>
+<div class="card soft top"><h3>Subcategoría: pnns_groups_2</h3>
+<table><tr><th>Subcategoría</th><th class="n">Clase dominante</th></tr>
+<tr><td>Fats</td><td class="n">96 % NOVA 2</td></tr>
+<tr><td>Waters and flavored waters</td><td class="n">97 % NOVA 1</td></tr>
+<tr><td>Processed meat</td><td class="n">81 % NOVA 4</td></tr>
+<tr><td>Dressings and sauces</td><td class="n">53 % NOVA 4</td></tr></table>
+<p class="small muted" style="margin:12px 0 0">Su categoría padre, «Fat and sauces», mezclaba Fats y Dressings.</p></div></div></div></section>
+<section class="slide "><div class="topbar"><span class="eyebrow">// Anexo · EDA</span><span>Feature engineering</span></div><div class="body">
+<h2>Variables nuevas desde ingredientes y aditivos: <span class="accent">por qué</span></h2>
+<div class="grid g2">
+<div class="card soft top"><h3>14 marcadores sí/no (% de productos)</h3>
+<table><tr><th></th><th class="n">N1</th><th class="n">N2</th><th class="n">N3</th><th class="n">N4</th></tr>
+<tr><td>Aromas</td><td class="n">0</td><td class="n">0</td><td class="n">0</td><td class="n">61,1</td></tr>
+<tr><td>Emulsionantes</td><td class="n">0</td><td class="n">0</td><td class="n">0</td><td class="n">47,1</td></tr>
+<tr><td>Jarabes</td><td class="n">0,5</td><td class="n">0,2</td><td class="n">1,2</td><td class="n">34,3</td></tr>
+<tr><td>Sal, azúcar o aceite</td><td class="n">0,2</td><td class="n">9,3</td><td class="n">91,1</td><td class="n">82,6</td></tr></table>
+<p class="small muted" style="margin:10px 0 0">Los de ultraprocesado separan el 4; sal/azúcar/aceite separan el 1 del 3.</p></div>
+<div class="card soft top"><h3>Contadores</h3>
+<table><tr><th></th><th class="n">N1</th><th class="n">N2</th><th class="n">N3</th><th class="n">N4</th></tr>
+<tr><td>n_ingredientes (mediana)</td><td class="n">1</td><td class="n">1</td><td class="n">4</td><td class="n">10</td></tr>
+<tr><td>Productos sin aditivos</td><td class="n">95 %</td><td class="n">99 %</td><td class="n">72 %</td><td class="n">13 %</td></tr></table>
+<p class="small" style="margin:12px 0 0">Correlación de Spearman con NOVA: <b>n_ingredientes 0,75</b> · <b>additives_n 0,72</b> · tiene_aromas 0,61. Grasa y energía ≈ 0,00 (pero identifican la clase 2).</p></div></div></div></section>
 <div id="progress"></div><div id="counter"></div></div>
 <div id="hint">← → para navegar · F pantalla completa</div>
 <script>
