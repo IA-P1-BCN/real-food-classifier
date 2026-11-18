@@ -1,0 +1,132 @@
+{
+  "model": "LightGBM (Optuna, prueba 49)",
+  "params": {
+    "objective": "multiclass",
+    "subsample_freq": 1,
+    "random_state": 42,
+    "n_jobs": -1,
+    "verbose": -1,
+    "n_estimators": 390,
+    "learning_rate": 0.05853678670700509,
+    "num_leaves": 202,
+    "min_child_samples": 18,
+    "min_split_gain": 0.03944469920812989,
+    "subsample": 0.8637985245627937,
+    "colsample_bytree": 0.8449649949173628,
+    "reg_lambda": 0.030545946383654883,
+    "reg_alpha": 0.01040481853123859
+  },
+  "features": [
+    "pnns_groups_2",
+    "additives_n",
+    "energy-kcal_100g",
+    "fat_100g",
+    "saturated-fat_100g",
+    "carbohydrates_100g",
+    "sugars_100g",
+    "fiber_100g",
+    "proteins_100g",
+    "salt_100g",
+    "fruits-vegetables-legumes_100g",
+    "n_ingredientes",
+    "tiene_aromas",
+    "tiene_edulcorantes",
+    "tiene_jarabes",
+    "tiene_almidon_modificado",
+    "tiene_proteina_aislada",
+    "tiene_colorantes",
+    "tiene_emulsionantes",
+    "tiene_potenciadores",
+    "tiene_aceite_palma",
+    "tiene_conservantes",
+    "tiene_sal",
+    "tiene_azucar",
+    "tiene_aceite",
+    "sin_lista_ingredientes"
+  ],
+  "cv": {
+    "f1_macro_train": 0.9996,
+    "f1_macro_cv": 0.965,
+    "f1_macro_cv_std": 0.0019,
+    "gap": 0.0346,
+    "recall": {
+      "nova_1": 0.9818,
+      "nova_2": 0.9921,
+      "nova_3": 0.9502,
+      "nova_4": 0.9616
+    },
+    "confusion_matrix": [
+      [
+        4862,
+        9,
+        55,
+        26
+      ],
+      [
+        7,
+        4274,
+        19,
+        8
+      ],
+      [
+        130,
+        14,
+        7473,
+        248
+      ],
+      [
+        123,
+        5,
+        692,
+        20550
+      ]
+    ]
+  },
+  "cv_3_folds": {
+    "f1_macro_train": 0.9997,
+    "f1_macro_cv": 0.9648,
+    "f1_macro_cv_std": 0.0008,
+    "gap": 0.0349,
+    "recall": {
+      "nova_1": 0.9808,
+      "nova_2": 0.9921,
+      "nova_3": 0.9513,
+      "nova_4": 0.9611
+    },
+    "confusion_matrix": [
+      [
+        4857,
+        8,
+        55,
+        32
+      ],
+      [
+        8,
+        4274,
+        20,
+        6
+      ],
+      [
+        132,
+        14,
+        7482,
+        237
+      ],
+      [
+        125,
+        5,
+        701,
+        20539
+      ]
+    ]
+  },
+  "test": {
+    "macro_f1": 0.9622
+  },
+  "n_train": 38495,
+  "env": {
+    "python": "3.12.16",
+    "scikit-learn": "1.9.1",
+    "lightgbm": "4.7.0"
+  }
+}

@@ -1,0 +1,151 @@
+{
+  "model": "XGBoost (Optuna, prueba 96) - modelo final elegido en M08",
+  "params": {
+    "objective": "multi:softprob",
+    "tree_method": "hist",
+    "enable_categorical": true,
+    "random_state": 42,
+    "n_jobs": -1,
+    "n_estimators": 255,
+    "learning_rate": 0.22240513290864158,
+    "max_depth": 10,
+    "min_child_weight": 3,
+    "gamma": 0.24070270214386436,
+    "subsample": 0.86366572941564,
+    "colsample_bytree": 0.5460632689060315,
+    "reg_lambda": 0.5938267535387278,
+    "reg_alpha": 0.1628792046230102
+  },
+  "features": [
+    "pnns_groups_2",
+    "additives_n",
+    "energy-kcal_100g",
+    "fat_100g",
+    "saturated-fat_100g",
+    "carbohydrates_100g",
+    "sugars_100g",
+    "fiber_100g",
+    "proteins_100g",
+    "salt_100g",
+    "fruits-vegetables-legumes_100g",
+    "n_ingredientes",
+    "tiene_aromas",
+    "tiene_edulcorantes",
+    "tiene_jarabes",
+    "tiene_almidon_modificado",
+    "tiene_proteina_aislada",
+    "tiene_colorantes",
+    "tiene_emulsionantes",
+    "tiene_potenciadores",
+    "tiene_aceite_palma",
+    "tiene_conservantes",
+    "tiene_sal",
+    "tiene_azucar",
+    "tiene_aceite",
+    "sin_lista_ingredientes"
+  ],
+  "comparison_cv": [
+    {
+      "modelo": "LightGBM (Optuna, prueba 49)",
+      "f1_macro_cv": 0.965,
+      "f1_macro_cv_std": 0.0019,
+      "gap": 0.0346,
+      "recall_nova_1": 0.9818,
+      "recall_nova_2": 0.9921,
+      "recall_nova_3": 0.9502,
+      "recall_nova_4": 0.9616
+    },
+    {
+      "modelo": "XGBoost (Optuna, prueba 96)",
+      "f1_macro_cv": 0.9646,
+      "f1_macro_cv_std": 0.0023,
+      "gap": 0.0269,
+      "recall_nova_1": 0.9832,
+      "recall_nova_2": 0.9916,
+      "recall_nova_3": 0.9559,
+      "recall_nova_4": 0.9583
+    },
+    {
+      "modelo": "RandomForestClassifier",
+      "f1_macro_cv": 0.9607,
+      "f1_macro_cv_std": 0.0025,
+      "gap": 0.0306,
+      "recall_nova_1": 0.9849,
+      "recall_nova_2": 0.9907,
+      "recall_nova_3": 0.9554,
+      "recall_nova_4": 0.9517
+    },
+    {
+      "modelo": "LogisticRegression",
+      "f1_macro_cv": 0.9508,
+      "f1_macro_cv_std": 0.0009,
+      "gap": 0.0014,
+      "recall_nova_1": 0.9792,
+      "recall_nova_2": 0.9872,
+      "recall_nova_3": 0.9251,
+      "recall_nova_4": 0.9495
+    },
+    {
+      "modelo": "DecisionTreeClassifier",
+      "f1_macro_cv": 0.9482,
+      "f1_macro_cv_std": 0.0019,
+      "gap": 0.0197,
+      "recall_nova_1": 0.9798,
+      "recall_nova_2": 0.9835,
+      "recall_nova_3": 0.9353,
+      "recall_nova_4": 0.9409
+    },
+    {
+      "modelo": "KNeighborsClassifier",
+      "f1_macro_cv": 0.9351,
+      "f1_macro_cv_std": 0.0036,
+      "gap": 0.0646,
+      "recall_nova_1": 0.9536,
+      "recall_nova_2": 0.9877,
+      "recall_nova_3": 0.9102,
+      "recall_nova_4": 0.9316
+    }
+  ],
+  "test": {
+    "macro_f1": 0.9611,
+    "recall": {
+      "nova_1": 0.9782,
+      "nova_2": 0.9898,
+      "nova_3": 0.944,
+      "nova_4": 0.9601
+    },
+    "confusion_matrix": [
+      [
+        1211,
+        0,
+        18,
+        9
+      ],
+      [
+        3,
+        1066,
+        8,
+        0
+      ],
+      [
+        47,
+        3,
+        1856,
+        60
+      ],
+      [
+        26,
+        6,
+        181,
+        5130
+      ]
+    ]
+  },
+  "n_train": 38495,
+  "n_test": 9624,
+  "env": {
+    "python": "3.12.16",
+    "scikit-learn": "1.9.1",
+    "xgboost": "3.4.1"
+  }
+}

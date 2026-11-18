@@ -1,0 +1,21 @@
+services:
+  jupyter:
+    build: .
+    image: real-food-classifier
+    command: jupyter lab --ip=0.0.0.0 --port=8888 --no-browser --allow-root
+    ports:
+      - "127.0.0.1:8888:8888"
+    volumes:
+      - .:/app
+    env_file:
+      - .env
+
+  streamlit:
+    image: real-food-classifier
+    command: streamlit run app/app.py --server.address=0.0.0.0 --server.port=8501
+    ports:
+      - "127.0.0.1:8501:8501"
+    volumes:
+      - .:/app
+    env_file:
+      - .env

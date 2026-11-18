@@ -1,0 +1,161 @@
+{
+  "model": "KNeighborsClassifier",
+  "variant": "3_k11_sin_redundantes",
+  "params": {
+    "n_neighbors": 11,
+    "weights": "distance",
+    "p": 1,
+    "log_skewed": true,
+    "dropped": [
+      "energy-kcal_100g",
+      "saturated-fat_100g"
+    ]
+  },
+  "features": [
+    "fat_100g",
+    "carbohydrates_100g",
+    "sugars_100g",
+    "fiber_100g",
+    "proteins_100g",
+    "salt_100g",
+    "fruits-vegetables-legumes_100g",
+    "additives_n",
+    "n_ingredientes",
+    "sin_lista_ingredientes",
+    "tiene_aromas",
+    "tiene_edulcorantes",
+    "tiene_jarabes",
+    "tiene_almidon_modificado",
+    "tiene_proteina_aislada",
+    "tiene_colorantes",
+    "tiene_emulsionantes",
+    "tiene_potenciadores",
+    "tiene_aceite_palma",
+    "tiene_conservantes",
+    "tiene_sal",
+    "tiene_azucar",
+    "tiene_aceite",
+    "pnns_groups_2"
+  ],
+  "cv": {
+    "f1_macro_train": 0.9997,
+    "f1_macro_cv": 0.9351,
+    "f1_macro_cv_std": 0.0036,
+    "gap": 0.0646,
+    "recall": {
+      "nova_1": 0.9536,
+      "nova_2": 0.9877,
+      "nova_3": 0.9102,
+      "nova_4": 0.9316
+    },
+    "confusion_matrix": [
+      [
+        4722,
+        29,
+        154,
+        47
+      ],
+      [
+        23,
+        4255,
+        20,
+        10
+      ],
+      [
+        238,
+        24,
+        7159,
+        444
+      ],
+      [
+        214,
+        27,
+        1221,
+        19908
+      ]
+    ]
+  },
+  "cv_seconds": 53.7,
+  "dummy_cv": {
+    "f1_macro_train": 0.1785,
+    "f1_macro_cv": 0.1785,
+    "f1_macro_cv_std": 0.0,
+    "gap": -0.0,
+    "recall": {
+      "nova_1": 0.0,
+      "nova_2": 0.0,
+      "nova_3": 0.0,
+      "nova_4": 1.0
+    },
+    "confusion_matrix": [
+      [
+        0,
+        0,
+        0,
+        4952
+      ],
+      [
+        0,
+        0,
+        0,
+        4308
+      ],
+      [
+        0,
+        0,
+        0,
+        7865
+      ],
+      [
+        0,
+        0,
+        0,
+        21370
+      ]
+    ]
+  },
+  "grid_search": {
+    "param_grid": {
+      "n_neighbors": [
+        5,
+        11,
+        21,
+        31,
+        51
+      ],
+      "weights": [
+        "uniform",
+        "distance"
+      ],
+      "p": [
+        1,
+        2
+      ]
+    },
+    "best_cv": {
+      "n_neighbors": 5,
+      "p": 1,
+      "weights": "distance"
+    },
+    "ampliacion_k": [
+      1,
+      3,
+      5,
+      7,
+      9
+    ],
+    "best_cv_ampliacion": {
+      "n_neighbors": 7,
+      "p": 1,
+      "weights": "distance"
+    },
+    "best_f1_cv_ampliacion": 0.9341,
+    "criterio_k": "k más grande a menos de 1 std del mejor F1 CV (k=7: 0,9341 ± 0,0031 → k=11)"
+  },
+  "notes": "Con weights='distance' el F1 de train es ~1 (cada punto es su propio vecino): el gap no mide sobreajuste.",
+  "n_train": 38495,
+  "env": {
+    "python": "3.12.16",
+    "scikit-learn": "1.9.1"
+  }
+}

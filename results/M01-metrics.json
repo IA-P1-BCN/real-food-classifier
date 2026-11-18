@@ -1,0 +1,120 @@
+{
+  "model": "LogisticRegression",
+  "variant": "4a log1p, sin redundantes",
+  "config": {
+    "C": 1.0,
+    "class_weight": null,
+    "log_skewed": true,
+    "dropped": [
+      "energy-kcal_100g",
+      "saturated-fat_100g"
+    ]
+  },
+  "features": [
+    "fat_100g",
+    "carbohydrates_100g",
+    "sugars_100g",
+    "fiber_100g",
+    "proteins_100g",
+    "salt_100g",
+    "fruits-vegetables-legumes_100g",
+    "additives_n",
+    "n_ingredientes",
+    "sin_lista_ingredientes",
+    "tiene_aromas",
+    "tiene_edulcorantes",
+    "tiene_jarabes",
+    "tiene_almidon_modificado",
+    "tiene_proteina_aislada",
+    "tiene_colorantes",
+    "tiene_emulsionantes",
+    "tiene_potenciadores",
+    "tiene_aceite_palma",
+    "tiene_conservantes",
+    "tiene_sal",
+    "tiene_azucar",
+    "tiene_aceite",
+    "pnns_groups_2"
+  ],
+  "cv": {
+    "f1_macro_train": 0.9522,
+    "f1_macro_cv": 0.9508,
+    "f1_macro_cv_std": 0.0009,
+    "gap": 0.0014,
+    "recall": {
+      "nova_1": 0.9792,
+      "nova_2": 0.9872,
+      "nova_3": 0.9251,
+      "nova_4": 0.9495
+    },
+    "confusion_matrix": [
+      [
+        4849,
+        28,
+        40,
+        35
+      ],
+      [
+        21,
+        4253,
+        20,
+        14
+      ],
+      [
+        233,
+        22,
+        7276,
+        334
+      ],
+      [
+        195,
+        10,
+        874,
+        20291
+      ]
+    ]
+  },
+  "dummy_cv": {
+    "f1_macro_train": 0.1785,
+    "f1_macro_cv": 0.1785,
+    "f1_macro_cv_std": 0.0,
+    "gap": -0.0,
+    "recall": {
+      "nova_1": 0.0,
+      "nova_2": 0.0,
+      "nova_3": 0.0,
+      "nova_4": 1.0
+    },
+    "confusion_matrix": [
+      [
+        0,
+        0,
+        0,
+        4952
+      ],
+      [
+        0,
+        0,
+        0,
+        4308
+      ],
+      [
+        0,
+        0,
+        0,
+        7865
+      ],
+      [
+        0,
+        0,
+        0,
+        21370
+      ]
+    ]
+  },
+  "n_train": 38495,
+  "env": {
+    "python": "3.12.16",
+    "scikit-learn": "1.9.1"
+  }
+}

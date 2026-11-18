@@ -1,0 +1,367 @@
+/* =========================================================
+   Real Food Classifier · Estilo "C · Lab"
+   Formulario con forma de etiqueta nutricional, tema oscuro con acentos lima y coral.
+   Los colores base del tema están en .streamlit/config.toml
+   ========================================================= */
+
+/* ---------- 0. Fuentes (siempre la primera regla del archivo) ---------- */
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+
+/* ---------- 1. Variables de diseño (cámbialas aquí y se aplica en todo) ---------- */
+:root {
+  --bg: #0E1311;          /* fondo de la página */
+  --surface: #151C19;     /* fondo de la etiqueta */
+  --line-soft: #2A3631;   /* bordes sutiles */
+  --text: #E8EFEA;        /* texto principal y líneas de la etiqueta */
+  --muted: #A9B8B0;       /* texto secundario */
+  --placeholder: #6F7F77;
+  --lime: #C6F36B;        /* acento verde */
+  --coral: #FF7A6B;       /* acento naranja (errores, aviso de modelo provisional) */
+  --font-sans: 'Space Grotesk', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+}
+
+/* ---------- 2. Base de la página ---------- */
+/* Fuente en los textos que pinta Streamlit (sin tocar los iconos) */
+.stApp [data-testid="stMarkdownContainer"],
+.stApp [data-testid="stMarkdownContainer"] *,
+.stApp input, .stApp textarea, .stApp button, .stApp label {
+  font-family: var(--font-sans);
+}
+/* Todo lo que va en monoespaciada */
+.rf-topbar, .rf-per span:last-child, .rf-unit, .rf-stamp-label,
+.rf-result-conf, .rf-legend-n, .rf-legend-p, .rf-footer,
+[data-testid="stNumberInput"] input {
+  font-family: var(--font-mono) !important;
+}
+
+/* Contenedor central: ancho máximo y márgenes */
+[data-testid="stMainBlockContainer"] {
+  max-width: 1160px !important;
+  padding: 2.5rem 2.5rem 3rem !important;
+}
+
+/* ---------- 3. Ocultar el "chrome" de Streamlit (cabecera, menú, barra lateral) ---------- */
+#MainMenu, footer,
+[data-testid="stHeader"],
+[data-testid="stToolbar"],
+[data-testid="stDecoration"],
+[data-testid="stSidebar"],
+[data-testid="stSidebarCollapsedControl"] {
+  display: none !important;
+}
+
+/* ---------- 4. Cabecera (HTML propio) ---------- */
+.rf-header {
+  border-bottom: 3px solid var(--text);
+  padding-bottom: 22px;
+  margin-bottom: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.rf-topbar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.rf-eyebrow { color: var(--lime); }
+.rf-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 10px;
+  border: 1.5px solid var(--text);
+  border-radius: 999px;
+}
+.rf-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--coral); }
+.rf-title {
+  margin: 0 !important;
+  padding: 0 !important;
+  font-size: clamp(44px, 7vw, 76px) !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.04em;
+  line-height: 0.95 !important;
+  color: var(--text) !important;
+}
+.rf-title .rf-accent { color: var(--lime); }
+/* Ocultar el icono de enlace que Streamlit añade a los títulos */
+[data-testid="stHeaderActionElements"] { display: none !important; }
+.rf-subtitle { margin: 0; font-size: 18px; max-width: 560px; line-height: 1.45; }
+
+/* ---------- 5. La etiqueta nutricional (contenedor con key="label_card") ---------- */
+.st-key-label_card {
+  background: var(--surface);
+  border: 3px solid var(--lime) !important;
+  border-radius: 6px !important;
+  padding: 20px 22px 22px !important;
+}
+/* Sin espacio automático entre elementos: las líneas de la etiqueta quedan pegadas */
+.st-key-label_card,
+.st-key-label_card [data-testid="stVerticalBlock"] { gap: 0 !important; }
+/* Excepción: la sección de ingredientes necesita aire entre sus campos */
+.st-key-label_card .st-key-sec_ingredientes,
+.st-key-label_card .st-key-sec_ingredientes [data-testid="stVerticalBlock"] { gap: 0.6rem !important; }
+
+.rf-label-title {
+  margin: 0;
+  font-size: 34px !important;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+}
+.rf-section-title {
+  margin: 0 !important;
+  padding: 18px 0 8px !important;
+  font-size: 24px !important;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+.rf-rule-thin  { height: 1px;  background: var(--text); margin: 10px 0 8px; }
+.rf-rule-thick { height: 10px; background: var(--text); margin-top: 12px; }
+.rf-per {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 0;
+  font-size: 13px;
+  font-weight: 700;
+  border-bottom: 4px solid var(--text);
+}
+.rf-per span:last-child { font-weight: 500; color: var(--muted); }
+.rf-field-label { font-size: 14px; font-weight: 700; margin: 4px 0 6px !important; }
+.rf-field-label.top { padding-top: 10px; }
+.rf-hint { font-size: 13px !important; color: var(--lime); margin: 0 0 6px !important; }
+/* Streamlit pone margin-bottom: -1rem a los textos (compensa el margen de los párrafos).
+   Como dentro de la etiqueta quitamos ese margen, el -1rem hacía que cada fila
+   se montara 16px sobre la anterior: lo anulamos también */
+.st-key-label_card [data-testid="stMarkdownContainer"] { margin-bottom: 0 !important; }
+.st-key-label_card [data-testid="stMarkdownContainer"] p { margin-bottom: 0; }
+
+/* Filas tipo etiqueta (nombre | input | unidad). Solo dentro de los contenedores
+   con key "rows_..." para no afectar a la cuadrícula de marcadores */
+[class*="st-key-rows"] [data-testid="stHorizontalBlock"] {
+  border-bottom: 1px solid var(--text);
+  align-items: center !important;
+  gap: 8px !important;
+  flex-wrap: nowrap !important;   /* que no se apile en móvil */
+}
+[class*="st-key-rows"] [data-testid="stColumn"] { min-width: 0 !important; }
+/* Anchos fijos: nombre flexible | input 96px | unidad 40px */
+[class*="st-key-rows"] [data-testid="stColumn"]:nth-child(1) { flex: 1 1 auto !important; }
+[class*="st-key-rows"] [data-testid="stColumn"]:nth-child(2) { flex: 0 0 96px !important; }
+[class*="st-key-rows"] [data-testid="stColumn"]:nth-child(3) { flex: 0 0 40px !important; }
+
+/* Nombre del nutriente */
+.rf-row-label { font-size: 15px; font-weight: 700; padding: 4px 0; }
+.rf-row-label.sub { font-weight: 400; padding-left: 18px; }
+.rf-row-label small { font-weight: 400; color: var(--muted); font-size: 13px; }
+.rf-unit { font-size: 13px; color: var(--muted); white-space: nowrap; }
+
+/* ---------- 6. Inputs numéricos: sin caja, alineados a la derecha ---------- */
+[data-testid="stNumberInputContainer"],
+[data-testid="stNumberInput"] div[data-baseweb="input"] {
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+}
+[data-testid="stNumberInput"] input {
+  background: transparent !important;
+  color: var(--text) !important;
+  text-align: right;
+  font-size: 17px !important;
+  padding-right: 2px !important;
+}
+[data-testid="stNumberInput"] input::placeholder { color: var(--placeholder); }
+/* Foco visible para accesibilidad (sustituye al borde que quitamos) */
+[data-testid="stNumberInputContainer"]:focus-within,
+[data-testid="stNumberInput"] div[data-baseweb="input"]:focus-within {
+  box-shadow: inset 0 -2px 0 var(--lime) !important;
+}
+/* Ocultar la X de borrar (no cabe en la fila), los botones + y - y el aviso "Press Enter" */
+[data-testid="stNumberInputClearButton"],
+[data-testid="stNumberInputStepUp"],
+[data-testid="stNumberInputStepDown"],
+[data-testid="InputInstructions"] { display: none !important; }
+
+/* ---------- 7. Selectbox y lista de ingredientes ---------- */
+[data-testid="stSelectbox"] [role="group"] {
+  background: transparent !important;
+  border: 0 !important;
+  border-bottom: 1.5px solid var(--text) !important;
+  border-radius: 0 !important;
+  font-size: 16px;
+}
+[data-testid="stTextArea"] textarea { background: var(--bg) !important; }
+
+/* ---------- 8. Botón PREDECIR ---------- */
+.st-key-predict { margin-top: 18px; width: 100% !important; }
+.st-key-predict button {
+  width: 100% !important;
+  height: 54px;
+  border: 0 !important;
+  border-radius: 10px !important;
+  background: var(--lime) !important;
+  color: var(--bg) !important;
+  transition: filter .15s ease;
+}
+.st-key-predict button p {
+  font-size: 18px !important;
+  font-weight: 700 !important;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--bg) !important;
+}
+.st-key-predict button:hover { filter: brightness(1.08); }
+.st-key-predict button:focus-visible { outline: 2px solid var(--text); outline-offset: 3px; }
+
+/* Botón NUEVO PRODUCTO: secundario, solo con borde para que no compita con Predecir */
+.st-key-reset { margin-top: 10px; width: 100% !important; }
+.st-key-reset button {
+  width: 100% !important;
+  height: 44px;
+  background: transparent !important;
+  border: 1.5px solid var(--line-soft) !important;
+  border-radius: 10px !important;
+  color: var(--muted) !important;
+}
+.st-key-reset button p {
+  font-family: var(--font-mono) !important;
+  font-size: 13px !important;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.st-key-reset button:hover { border-color: var(--text) !important; color: var(--text) !important; }
+
+/* ---------- 9. Columna de resultado ---------- */
+/* Se queda fija al hacer scroll: el resultado se ve sin tener que subir */
+div[data-testid="stColumn"]:has(.rf-result-head) { position: sticky; top: 1.5rem; align-self: flex-start; }
+
+.rf-result-head {
+  border-bottom: 1.5px solid var(--text);
+  padding-bottom: 8px;
+  margin-bottom: 28px;
+}
+.rf-result-head h2 {
+  margin: 0 !important;
+  padding: 0 !important;
+  font-size: 22px !important;
+  font-weight: 700 !important;
+  text-transform: uppercase;
+}
+.rf-empty {
+  padding: 18px;
+  border: 1px dashed var(--line-soft);
+  border-radius: 8px;
+  color: var(--muted);
+  font-size: 15px;
+  margin-bottom: 28px;
+}
+.rf-empty strong { color: var(--lime); }
+.rf-error { border-color: var(--coral); color: var(--coral); line-height: 1.6; }
+.rf-warning { border-style: solid; border-color: #F2D06B; color: #F2D06B; margin-top: -12px; }
+
+.rf-result {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 28px;
+  margin-bottom: 28px;
+}
+/* El sello circular. El color llega por la variable --nova desde Python */
+.rf-stamp {
+  flex: none;
+  width: 200px;
+  height: 200px;
+  box-sizing: border-box;
+  border-radius: 50%;
+  border: 5px solid var(--nova);
+  color: var(--nova);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transform: rotate(-8deg);
+  animation: rf-stamp-in .35s ease-out;
+}
+.rf-stamp-label { font-size: 14px; font-weight: 600; letter-spacing: 0.2em; }
+.rf-stamp-num   { font-size: 96px; font-weight: 700; line-height: 0.9; }
+.rf-stamp-name  { font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; text-align: center; padding: 0 16px; }
+
+/* Animación de "sellado" al aparecer */
+@keyframes rf-stamp-in {
+  from { transform: rotate(-8deg) scale(1.25); opacity: 0; }
+  to   { transform: rotate(-8deg) scale(1);    opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) { .rf-stamp { animation: none; } }
+
+.rf-result-text { flex: 1 1 180px; display: flex; flex-direction: column; gap: 10px; }
+.rf-result-name { font-size: 24px; font-weight: 700; line-height: 1; text-transform: uppercase; }
+.rf-result-desc { font-size: 15px; line-height: 1.5; color: var(--text); }
+.rf-result-conf { font-size: 13px; color: var(--muted); }
+
+/* ---------- 10. Leyenda NOVA con la probabilidad de cada grupo ---------- */
+.rf-legend { border-top: 3px solid var(--text); margin-bottom: 28px; }
+.rf-legend-title { font-size: 13px; color: var(--muted); padding: 8px 8px 0; }
+/* El fondo de cada fila es una barra: el ancho (--p) y el color (--c) llegan desde Python */
+.rf-legend-row {
+  display: flex;
+  gap: 14px;
+  align-items: baseline;
+  padding: 10px 8px;
+  border-bottom: 1px solid var(--text);
+  background: linear-gradient(90deg, var(--c-soft, transparent) var(--p, 0%), transparent var(--p, 0%));
+}
+.rf-legend-n    { width: 64px; flex: none; font-size: 13px; font-weight: 600; }
+.rf-legend-name { font-size: 15px; font-weight: 700; white-space: nowrap; }
+.rf-legend-desc { font-size: 13px; color: var(--muted); }
+.rf-legend-p    { margin-left: auto; font-size: 13px; font-weight: 600; }
+.rf-legend-row.active .rf-legend-p { color: var(--text); }
+
+.rf-footer { margin: 0; font-size: 12px !important; color: var(--muted); }
+
+/* ---------- 10b. Aviso (A05): caja coral, grande y legible ---------- */
+.rf-disclaimer {
+  border: 2px solid var(--coral);
+  border-left-width: 8px;           /* franja gruesa a la izquierda, como un aviso */
+  background: color-mix(in srgb, var(--coral) 10%, transparent);            /* coral al 10 % de opacidad */
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.5;
+  padding: 12px 16px;
+  margin: 0 0 20px;
+}
+.rf-disclaimer strong { color: var(--coral); text-transform: uppercase; }
+/* Versión fija: pegada abajo, siempre a la vista aunque hagas scroll */
+.rf-disclaimer-fixed {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  z-index: 1000;                     /* por encima del resto de la app */
+  margin: 0;
+  background: var(--bg);             /* fondo opaco: el formulario no se ve por detrás */
+  border-width: 2px 0 0;             /* solo una línea coral arriba */
+  text-align: center;
+}
+.rf-disclaimer-short { display: none; }
+
+/* Hueco al final de la página para que la barra fija no tape el último contenido */
+[data-testid="stMainBlockContainer"] { padding-bottom: 7rem !important; }
+
+/* ---------- 11. Móvil ---------- */
+@media (max-width: 640px) {
+  [data-testid="stMainBlockContainer"] { padding: 1.5rem 1rem 2rem !important; }
+  .st-key-label_card { padding: 14px 14px 16px !important; }
+  .rf-label-title { font-size: 26px !important; }
+  .rf-row-label { font-size: 14px; }
+  .rf-stamp { width: 160px; height: 160px; }
+  .rf-stamp-num { font-size: 72px; }
+  .rf-legend-desc { display: none; }
+  .rf-disclaimer { font-size: 14px; padding: 10px 12px; }
+  .rf-disclaimer-long { display: none; }
+  .rf-disclaimer-short { display: inline; }
+  [data-testid="stMainBlockContainer"] { padding-bottom: 9rem !important; }
+}
